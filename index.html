@@ -1,0 +1,1911 @@
+<title>Dormir para Aprender</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<script>try{var _t=localStorage.getItem('dpa.theme');document.documentElement.setAttribute('data-theme',_t==='light'?'light':'dark');}catch(e){document.documentElement.setAttribute('data-theme','dark');}</script>
+
+<style>
+/* ============================================================
+   DORMIR PARA APRENDER — sistema visual
+   Oscuro / futurista. Negro profundo, acentos violeta + cian
+   eléctricos, detalles luminosos muy controlados.
+   ============================================================ */
+:root{
+  /* ---- MODO OSCURO (identidad principal) ---- */
+  --bg:#05060b;
+  --bg-2:#0a0c14;
+  --bg-3:#0e1220;
+  --surface: rgba(255,255,255,0.035);
+  --surface-solid:#0d1120;
+  --surface-2: rgba(255,255,255,0.06);
+  --surface-hi: rgba(255,255,255,0.09);
+  --line: rgba(255,255,255,0.09);
+  --line-2: rgba(255,255,255,0.16);
+
+  --text:#e9ebf5;
+  --text-dim:#a4aac0;
+  --text-mute:#767d94;
+
+  --accent:#7b5cff;         /* violeta eléctrico */
+  --accent-2:#33e1ff;       /* cian eléctrico */
+  --accent-soft: rgba(123,92,255,0.14);
+  --accent-line: rgba(123,92,255,0.42);
+  --cyan-soft: rgba(51,225,255,0.12);
+  --glow: rgba(123,92,255,0.55);
+  --on-accent:#ffffff;
+
+  --good:#37e0a8;
+  --warn:#ffc061;
+  --alert:#ff7d7d;
+
+  --st-wake:#ff9057;
+  --st-rem:#c58bff;
+  --st-light:#5aa2ff;
+  --st-deep:#2fd4c4;
+
+  --radius:12px;
+  --radius-s:9px;
+  --radius-xs:6px;
+  --maxread:64ch;
+  --shadow-lg: 0 26px 70px -30px rgba(0,0,0,0.8);
+
+  --font-display:"Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-body:"Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  color-scheme: dark;
+}
+
+:root[data-theme="light"]{
+  --bg:#eceef4;
+  --bg-2:#f5f6fa;
+  --bg-3:#ffffff;
+  --surface:#ffffff;
+  --surface-solid:#ffffff;
+  --surface-2:#f0f1f7;
+  --surface-hi:#e8eaf2;
+  --line: rgba(18,20,38,0.10);
+  --line-2: rgba(18,20,38,0.18);
+
+  --text:#161a2c;
+  --text-dim:#454b64;
+  --text-mute:#666c82;
+
+  --accent:#5a3fe0;
+  --accent-2:#0b7391;
+  --accent-soft: rgba(90,63,224,0.10);
+  --accent-line: rgba(90,63,224,0.35);
+  --cyan-soft: rgba(10,140,174,0.10);
+  --glow: rgba(90,63,224,0.28);
+  --on-accent:#ffffff;
+
+  --good:#128058;
+  --warn:#966616;
+  --alert:#bd4127;
+
+  --st-wake:#c26a2f;
+  --st-rem:#7d54c9;
+  --st-light:#3f7fc4;
+  --st-deep:#1c7d81;
+
+  --shadow-lg: 0 22px 54px -26px rgba(18,20,38,0.28);
+  color-scheme: light;
+}
+
+*{ box-sizing: border-box; }
+html,body{ background: var(--bg); }
+html{ scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body{
+  margin: 0; color: var(--text);
+  font-family: var(--font-body); font-size: 17px; line-height: 1.62;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior: auto; }
+  *, *::before, *::after{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; }
+}
+
+/* ---------- ambiente de fondo ---------- */
+.bg{ position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.bg::before{
+  content:""; position: absolute; inset: 0;
+  background:
+    radial-gradient(1200px 600px at 78% -8%, var(--accent-soft), transparent 60%),
+    radial-gradient(900px 600px at 12% 108%, var(--cyan-soft), transparent 60%),
+    radial-gradient(1000px 700px at 50% 50%, rgba(0,0,0,0) 40%, var(--bg) 100%);
+}
+.bg .grid{
+  position: absolute; inset: -2px;
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 64px 64px;
+  -webkit-mask-image: radial-gradient(1100px 700px at 50% 0%, #000 0%, transparent 75%);
+          mask-image: radial-gradient(1100px 700px at 50% 0%, #000 0%, transparent 75%);
+  opacity: .5;
+}
+:root[data-theme="light"] .bg .grid{ opacity: .7; }
+
+.wrap{ position: relative; z-index: 1; }
+
+/* ---------- tipografía ---------- */
+h1,h2,h3,h4{ font-family: var(--font-display); font-weight: 600; line-height: 1.1; text-wrap: balance; margin: 0; letter-spacing: -0.02em; }
+h1{ font-size: clamp(2.6rem, 7.5vw, 5rem); font-weight: 500; letter-spacing: -0.035em; line-height: 1.02; }
+h2{ font-size: clamp(1.75rem, 4.2vw, 2.7rem); }
+h3{ font-size: 1.3rem; }
+h4{ font-size: 1.02rem; font-family: var(--font-body); font-weight: 600; letter-spacing: 0; }
+p{ margin: 0 0 1rem; max-width: var(--maxread); }
+a{ color: var(--accent-2); text-underline-offset: 3px; }
+strong{ font-weight: 600; color: var(--text); }
+.lead{ font-size: 1.16rem; color: var(--text-dim); line-height: 1.55; }
+.eyebrow{
+  font-family: var(--font-mono); font-size: .72rem; letter-spacing: .22em;
+  text-transform: uppercase; color: var(--accent-2);
+  margin: 0 0 1rem; display: inline-flex; align-items: center; gap: .6rem;
+}
+.eyebrow::before{ content:""; width: 26px; height: 1px; background: currentColor; opacity: .55; }
+
+:focus-visible{ outline: 2px solid var(--accent-2); outline-offset: 2px; border-radius: 5px; }
+:focus:not(:focus-visible){ outline: none; }
+
+/* ---------- header ---------- */
+.site-header{
+  position: sticky; top: 0; z-index: 60;
+  background: color-mix(in srgb, var(--bg) 72%, transparent);
+  backdrop-filter: saturate(160%) blur(16px);
+  border-bottom: 1px solid var(--line);
+}
+.header-inner{
+  max-width: 1160px; margin: 0 auto; display: flex; align-items: center; gap: .8rem;
+  padding: .62rem clamp(.8rem, 4vw, 2rem);
+}
+.brand{
+  display: flex; align-items: center; gap: .55rem; flex-shrink: 0;
+  font-family: var(--font-display); font-weight: 600; font-size: 1rem;
+  letter-spacing: -0.01em; color: var(--text);
+  background: none; border: 0; cursor: pointer; padding: .2rem;
+}
+.brand .node{ width: 22px; height: 22px; flex-shrink: 0; filter: drop-shadow(0 0 6px var(--glow)); }
+.brand:hover .node{ animation: bob 1.4s ease-in-out infinite; }
+@keyframes bob{ 50%{ transform: translateY(-2px); } }
+
+.nav{
+  display: flex; gap: .05rem; margin-left: auto;
+  overflow-x: auto; scrollbar-width: none; scroll-snap-type: x proximity;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 14px, #000 calc(100% - 14px), transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 14px, #000 calc(100% - 14px), transparent);
+}
+.nav::-webkit-scrollbar{ display: none; }
+.nav button{
+  font-family: var(--font-mono); font-size: .72rem; font-weight: 500;
+  text-transform: uppercase; letter-spacing: .12em;
+  color: var(--text-mute); background: none; border: 0;
+  padding: .55rem .7rem; cursor: pointer; white-space: nowrap;
+  scroll-snap-align: center; position: relative; transition: color .16s;
+}
+.nav button:hover{ color: var(--text); }
+.nav button[aria-current="page"]{ color: var(--text); }
+.nav button[aria-current="page"]::after{
+  content:""; position: absolute; left: .7rem; right: .7rem; bottom: 0; height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  box-shadow: 0 0 10px var(--glow); border-radius: 2px;
+}
+
+.h-actions{ display: flex; align-items: center; gap: .5rem; flex-shrink: 0; }
+.progress-pill{
+  display: inline-flex; align-items: center; gap: .45rem;
+  font-family: var(--font-mono); font-size: .74rem; font-weight: 500; color: var(--text-dim);
+  background: var(--surface); border: 1px solid var(--line); padding: .33rem .55rem;
+  border-radius: 999px; cursor: pointer; transition: border-color .16s, color .16s, box-shadow .16s;
+}
+.progress-pill:hover{ border-color: var(--accent-line); color: var(--text); box-shadow: 0 0 16px -4px var(--glow); }
+.progress-pill .ring{ width: 15px; height: 15px; }
+.icon-btn{
+  background: var(--surface); border: 1px solid var(--line); color: var(--text-dim);
+  width: 33px; height: 33px; border-radius: 999px; cursor: pointer;
+  display: grid; place-items: center; flex-shrink: 0;
+  transition: border-color .16s, color .16s, box-shadow .16s;
+}
+.icon-btn:hover{ border-color: var(--accent-line); color: var(--text); box-shadow: 0 0 16px -4px var(--glow); }
+.icon-btn svg{ width: 16px; height: 16px; }
+
+/* ---------- layout ---------- */
+main{ max-width: 1160px; margin: 0 auto; padding: 0 clamp(1rem, 4vw, 2rem) 5.5rem; }
+.view{ padding-top: clamp(2rem, 5vw, 3.6rem); }
+.view[hidden]{ display: none !important; }
+.view.enter{ animation: viewIn .34s ease both; }
+@keyframes viewIn{ from{ opacity: 0; } to{ opacity: 1; } }
+#view-inicio{ padding-top: 0; }
+
+.section-head{ max-width: var(--maxread); margin-bottom: 1.7rem; }
+.section-head p{ margin-bottom: 0; }
+
+.simple{
+  display: flex; gap: .75rem; align-items: flex-start; max-width: var(--maxread); margin: 0 0 2rem;
+  background: var(--accent-soft); border: 1px solid var(--accent-line);
+  padding: .9rem 1.05rem; border-radius: var(--radius-s); font-size: .95rem; color: var(--text);
+}
+.simple svg{ width: 18px; height: 18px; color: var(--accent-2); flex-shrink: 0; margin-top: .18rem; }
+.simple b{ font-family: var(--font-mono); font-size: .66rem; letter-spacing: .12em; text-transform: uppercase; color: var(--accent-2); }
+
+.grid{ display: grid; gap: 1rem; }
+.grid.cols-2{ grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+
+.stagger > *{ animation: rise .5s cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(var(--i,0) * 55ms); }
+@keyframes rise{ from{ opacity: 0; transform: translateY(14px); } to{ opacity: 1; transform: none; } }
+
+.card{
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 1.4rem; position: relative;
+}
+.card h3{ margin-bottom: .4rem; }
+.card p:last-child{ margin-bottom: 0; }
+
+.note{
+  font-size: .87rem; color: var(--text-dim);
+  background: var(--surface); border: 1px solid var(--line); border-left: 2px solid var(--accent);
+  padding: .85rem 1.05rem; border-radius: var(--radius-xs); max-width: var(--maxread);
+}
+.note strong{ color: var(--text); }
+.linklike{ background: none; border: 0; color: var(--accent-2); cursor: pointer; font: inherit; text-decoration: underline; padding: 0; }
+
+/* ---------- botones ---------- */
+.btn{
+  font-family: var(--font-body); font-size: .96rem; font-weight: 600;
+  display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+  padding: .78rem 1.35rem; border-radius: 10px; border: 1px solid transparent;
+  cursor: pointer; transition: transform .12s ease, box-shadow .2s, border-color .16s, background .16s;
+}
+.btn:active{ transform: translateY(1px) scale(.99); }
+.btn-primary{
+  background: linear-gradient(135deg, #5836d4, #7742e2);
+  color: #fff; box-shadow: 0 0 26px -8px var(--glow), inset 0 1px 0 rgba(255,255,255,.18);
+}
+.btn-primary:hover{ box-shadow: 0 0 40px -8px var(--glow), inset 0 1px 0 rgba(255,255,255,.25); transform: translateY(-1px); }
+.btn-ghost{ background: var(--surface-2); border-color: var(--line-2); color: var(--text); }
+.btn-ghost:hover{ border-color: var(--accent-line); box-shadow: 0 0 20px -8px var(--glow); transform: translateY(-1px); }
+.btn-sm{ padding: .55rem 1rem; font-size: .87rem; border-radius: 8px; }
+
+/* ---------- pager ---------- */
+.pager{
+  display: flex; gap: .7rem; justify-content: space-between; align-items: stretch;
+  margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--line); max-width: 880px;
+}
+.pager button{
+  flex: 1; display: flex; flex-direction: column; gap: .15rem; min-width: 0;
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-s);
+  padding: .72rem .95rem; cursor: pointer; font-family: var(--font-body);
+  transition: border-color .16s, transform .12s, box-shadow .16s;
+}
+.pager button:hover{ border-color: var(--accent-line); transform: translateY(-1px); box-shadow: 0 0 22px -10px var(--glow); }
+.pager button.next{ text-align: right; align-items: flex-end; }
+.pager button .dir{ font-family: var(--font-mono); font-size: .64rem; letter-spacing: .14em; text-transform: uppercase; color: var(--text-mute); }
+.pager button .lbl{ font-weight: 600; font-size: .93rem; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.pager button[disabled]{ opacity: 0; pointer-events: none; }
+#view-test > .pager{ display: none; }
+
+/* ---------- HERO ---------- */
+.hero{
+  position: relative; overflow: hidden;
+  margin: 0 calc(-1 * clamp(1rem,4vw,2rem)) clamp(2rem,5vw,3.2rem);
+  padding: clamp(3.5rem,11vw,7.5rem) clamp(1.25rem,4vw,2.6rem) clamp(3rem,7vw,5rem);
+  border-bottom: 1px solid var(--line);
+  min-height: clamp(480px, 78vh, 720px);
+  display: flex; align-items: center;
+}
+.hero-viz{
+  position: absolute; top: 50%; right: -6%; transform: translateY(-50%);
+  width: min(760px, 60%); height: auto; z-index: 0; opacity: .62;
+  -webkit-mask-image: radial-gradient(closest-side, #000 55%, transparent 100%);
+          mask-image: radial-gradient(closest-side, #000 55%, transparent 100%);
+}
+.hero-inner{ position: relative; z-index: 2; max-width: 620px; }
+.hero-kicker{
+  display: inline-flex; align-items: center; gap: .55rem;
+  font-family: var(--font-mono); font-size: .7rem; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--accent-2); border: 1px solid var(--line-2);
+  background: var(--surface); padding: .4rem .8rem; border-radius: 999px; margin-bottom: 1.4rem;
+}
+.hero-kicker .dot{ width: 6px; height: 6px; border-radius: 50%; background: var(--accent-2); box-shadow: 0 0 8px var(--accent-2); animation: blink 2s ease-in-out infinite; }
+@keyframes blink{ 0%,100%{ opacity: 1; } 50%{ opacity: .3; } }
+.hero h1{ margin-bottom: 1.15rem; max-width: 14ch; }
+.hero h1 .grad{
+  background: linear-gradient(110deg, var(--accent) 8%, var(--accent-2) 92%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+:root[data-theme="light"] .hero h1 .grad{ background: linear-gradient(110deg, #6a3ff0 8%, #0b7391 92%); -webkit-background-clip: text; background-clip: text; }
+.hero .lead{ max-width: 42ch; margin-bottom: 1.9rem; color: var(--text-dim); }
+.hero-actions{ display: flex; flex-wrap: wrap; gap: .7rem; }
+.scroll-cue{
+  position: absolute; left: 50%; bottom: 1.1rem; transform: translateX(-50%);
+  font-family: var(--font-mono); font-size: .62rem; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--text-mute); display: flex; flex-direction: column; align-items: center; gap: .35rem;
+}
+.scroll-cue .bar{ width: 1px; height: 26px; background: linear-gradient(var(--accent-2), transparent); animation: cue 2s ease-in-out infinite; }
+@keyframes cue{ 0%,100%{ opacity: .3; transform: scaleY(.6); } 50%{ opacity: 1; transform: scaleY(1); } }
+
+/* hero viz animaciones (solo opacidad / trazo — sin problemas de origen de transform) */
+.hv-core{ animation: hvpulse 5s ease-in-out infinite; }
+@keyframes hvpulse{ 0%,100%{ opacity: .5; } 50%{ opacity: .95; } }
+.hv-tw{ animation: hvtw 4s ease-in-out infinite; }
+.hv-tw:nth-of-type(2n){ animation-delay: 1.3s; }
+.hv-tw:nth-of-type(3n){ animation-delay: 2.1s; }
+@keyframes hvtw{ 0%,100%{ opacity: .25; } 50%{ opacity: 1; } }
+.hv-eeg{ stroke-dasharray: 1400; stroke-dashoffset: 1400; animation: hvtrace 4s ease-out .4s forwards; }
+@keyframes hvtrace{ to{ stroke-dashoffset: 0; } }
+
+/* ---------- HUD stat tiles ---------- */
+.stat-row{
+  display: grid; gap: 1px; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  background: var(--line); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; margin-top: 2rem;
+}
+.stat{ background: var(--bg-2); padding: 1.2rem 1.25rem; position: relative; }
+.stat::before{ content:""; position: absolute; left: 0; top: 0; width: 26px; height: 2px; background: linear-gradient(90deg, var(--accent), var(--accent-2)); }
+.stat .n{ font-family: var(--font-mono); font-weight: 600; font-size: 1.7rem; line-height: 1; color: var(--text); letter-spacing: -.02em; }
+.stat .l{ font-size: .84rem; color: var(--text-dim); margin-top: .45rem; }
+.stat .src{ font-family: var(--font-mono); font-size: .64rem; color: var(--text-mute); margin-top: .4rem; letter-spacing: .03em; }
+
+.quick-links{ display: grid; gap: .7rem; grid-template-columns: repeat(auto-fit, minmax(210px,1fr)); margin-top: 2rem; }
+.quick-links button{
+  display: flex; align-items: center; gap: .75rem; text-align: left;
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-s);
+  padding: .95rem 1.05rem; cursor: pointer; font-family: var(--font-body); font-size: .94rem; font-weight: 600; color: var(--text);
+  transition: border-color .16s, transform .12s, box-shadow .16s;
+}
+.quick-links button:hover{ border-color: var(--accent-line); transform: translateY(-2px); box-shadow: 0 0 26px -12px var(--glow); }
+.quick-links button .qi{ width: 32px; height: 32px; border-radius: 8px; background: var(--accent-soft); color: var(--accent-2); display: grid; place-items: center; flex-shrink: 0; border: 1px solid var(--line); }
+.quick-links button .qi svg{ width: 17px; height: 17px; }
+
+/* ---------- hipnograma ---------- */
+.hypno-card{ padding: 1.45rem clamp(1rem,3vw,1.7rem); }
+.hypno-wrap{ position: relative; }
+.hypno-wrap svg{ display: block; width: 100%; height: auto; touch-action: pan-y; }
+.hypno-steps{ animation: reveal 1s ease .1s both; }
+@keyframes reveal{ from{ clip-path: inset(0 100% 0 0); } to{ clip-path: inset(0 0 0 0); } }
+.hypno-legend{ display: flex; flex-wrap: wrap; gap: .35rem 1.1rem; margin-top: 1rem; font-size: .8rem; color: var(--text-dim); font-family: var(--font-mono); }
+.hypno-legend span{ display: inline-flex; align-items: center; gap: .4rem; }
+.hypno-legend i{ width: 11px; height: 11px; border-radius: 3px; flex-shrink: 0; box-shadow: 0 0 8px -1px currentColor; }
+.hypno-tip{
+  position: absolute; pointer-events: none; opacity: 0;
+  background: var(--bg); color: var(--text); border: 1px solid var(--accent-line);
+  font-family: var(--font-mono); font-size: .72rem; padding: .35rem .55rem;
+  border-radius: 6px; transform: translate(-50%, -140%); transition: opacity .12s;
+  white-space: nowrap; z-index: 5; box-shadow: 0 0 20px -6px var(--glow);
+}
+
+.stage-list{ display: grid; gap: .7rem; }
+.stage-item{ border: 1px solid var(--line); border-radius: var(--radius-s); background: var(--surface); overflow: hidden; transition: border-color .16s, box-shadow .16s; }
+.stage-item[data-open="true"]{ border-color: var(--accent-line); box-shadow: 0 0 24px -14px var(--glow); }
+.stage-item > button{
+  width: 100%; text-align: left; background: none; border: 0; cursor: pointer;
+  padding: 1rem 1.15rem; display: flex; align-items: center; gap: .8rem;
+  font-family: var(--font-body); font-size: 1.01rem; font-weight: 600; color: var(--text);
+}
+.stage-item .dot{ width: 13px; height: 13px; border-radius: 4px; flex-shrink: 0; box-shadow: 0 0 10px -1px currentColor; }
+.stage-item .pct{ margin-left: auto; font-family: var(--font-mono); font-size: .76rem; color: var(--text-mute); font-weight: 400; }
+.stage-item .chev{ transition: transform .28s; color: var(--text-mute); flex-shrink: 0; margin-left: .3rem; }
+.stage-item[data-open="true"] .chev{ transform: rotate(180deg); }
+.stage-item .body{ display: grid; grid-template-rows: 0fr; transition: grid-template-rows .3s ease; }
+.stage-item[data-open="true"] .body{ grid-template-rows: 1fr; }
+.stage-item .body > div{ overflow: hidden; }
+.stage-item .body p{ font-size: .94rem; color: var(--text-dim); margin: 0; padding: 0 1.15rem 1.15rem; }
+
+/* ---------- efectos ---------- */
+.effect-grid{ display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(215px,1fr)); }
+.effect{ background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.3rem; transition: transform .14s, box-shadow .16s, border-color .16s; }
+.effect:hover{ transform: translateY(-3px); border-color: var(--accent-line); box-shadow: 0 0 30px -16px var(--glow); }
+.effect .ico{ width: 36px; height: 36px; border-radius: 9px; display: grid; place-items: center; margin-bottom: .8rem; background: var(--accent-soft); color: var(--accent-2); border: 1px solid var(--line); }
+.effect .ico svg{ width: 20px; height: 20px; }
+.effect h4{ margin-bottom: .3rem; }
+.effect p{ font-size: .89rem; color: var(--text-dim); margin: 0; }
+.effect .chain{ margin-top: .85rem; padding-top: .7rem; border-top: 1px dashed var(--line-2); font-family: var(--font-mono); font-size: .72rem; color: var(--text-mute); display: flex; gap: .35rem; flex-wrap: wrap; align-items: center; }
+.effect .chain b{ color: var(--accent-2); font-weight: 500; }
+
+/* ---------- comparación ---------- */
+.compare{ display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(285px,1fr)); }
+.path{ border-radius: var(--radius); border: 1px solid var(--line); padding: 1.45rem; background: var(--surface); position: relative; }
+.path::before{ content:""; position: absolute; left: -1px; right: -1px; top: -1px; height: 3px; border-radius: var(--radius) var(--radius) 0 0; }
+.path.low::before{ background: var(--alert); box-shadow: 0 0 16px -2px var(--alert); }
+.path.ok::before{ background: var(--good); box-shadow: 0 0 16px -2px var(--good); }
+.path h3{ display: flex; align-items: baseline; gap: .5rem; margin-bottom: 1rem; }
+.path h3 .hrs{ font-family: var(--font-mono); font-size: .9rem; color: var(--text-mute); font-weight: 400; margin-left: auto; }
+.path ol{ margin: 0; padding: 0; list-style: none; counter-reset: step; display: grid; gap: .6rem; }
+.path li{ position: relative; padding-left: 2.1rem; font-size: .91rem; color: var(--text-dim); counter-increment: step; }
+.path li::before{
+  content: counter(step,decimal-leading-zero); position: absolute; left: 0; top: -.05rem;
+  width: 1.6rem; height: 1.5rem; display: grid; place-items: center;
+  font-family: var(--font-mono); font-size: .68rem; font-weight: 500;
+  background: var(--surface-2); color: var(--text-mute); border-radius: 5px;
+}
+.path.low li:last-child{ color: var(--alert); font-weight: 500; }
+.path.ok li:last-child{ color: var(--good); font-weight: 500; }
+
+/* ---------- edad / horas ---------- */
+.age-tabs{ display: inline-flex; gap: .25rem; margin-bottom: 1.5rem; background: var(--surface-2); border: 1px solid var(--line); padding: .28rem; border-radius: 10px; flex-wrap: wrap; }
+.age-tabs button{
+  font-family: var(--font-mono); font-weight: 500; font-size: .82rem; letter-spacing: .02em;
+  padding: .58rem 1rem; border-radius: 7px; cursor: pointer; background: none; border: 0; color: var(--text-mute); transition: all .16s;
+}
+.age-tabs button[aria-pressed="true"]{ background: var(--accent-soft); color: var(--text); box-shadow: inset 0 0 0 1px var(--accent-line), 0 0 18px -8px var(--glow); }
+.rec-panel{ border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); padding: 1.7rem; max-width: var(--maxread); position: relative; overflow: hidden; }
+.rec-panel::before{ content:""; position:absolute; inset:0; background: radial-gradient(300px 160px at 12% 0%, var(--accent-soft), transparent 70%); pointer-events:none; }
+.rec-panel .big{ font-family: var(--font-mono); font-weight: 600; font-size: clamp(2.6rem, 9vw, 3.7rem); line-height: 1; color: var(--text); text-shadow: 0 0 30px var(--glow); position: relative; }
+.rec-panel .unit{ font-size: .95rem; color: var(--text-mute); font-family: var(--font-body); }
+.rec-panel .who{ font-size: .89rem; color: var(--text-dim); margin: .8rem 0 0; position: relative; }
+.rec-bar{ height: 14px; border-radius: 999px; background: var(--surface-2); margin: 1.2rem 0 .45rem; position: relative; overflow: hidden; border: 1px solid var(--line); }
+.rec-bar .fill{ position: absolute; top: 0; bottom: 0; background: linear-gradient(90deg, var(--accent-2), var(--accent)); border-radius: 999px; box-shadow: 0 0 18px -2px var(--glow); transition: left .5s ease, width .5s ease; }
+.rec-scale{ display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: .68rem; color: var(--text-mute); }
+.why-list{ display: grid; gap: .6rem; grid-template-columns: repeat(auto-fit, minmax(235px,1fr)); margin-top: 1.4rem; }
+.why-list .chip{ font-size: .87rem; color: var(--text-dim); background: var(--surface); border: 1px solid var(--line); padding: .8rem .9rem; border-radius: var(--radius-s); display: flex; align-items: flex-start; gap: .55rem; }
+.why-list .chip svg{ width: 14px; height: 14px; color: var(--accent-2); flex-shrink: 0; margin-top: .3rem; }
+.why-list .chip strong{ color: var(--text); }
+
+/* ---------- expertos ---------- */
+.concept-chain{ display: flex; flex-wrap: wrap; align-items: center; gap: .45rem .35rem; margin: 0 0 2.2rem; }
+.cc-node{
+  font-family: var(--font-mono); font-size: .74rem; text-transform: uppercase; letter-spacing: .12em;
+  padding: .5rem .8rem; border: 1px solid var(--line-2); border-radius: 7px;
+  background: var(--surface); color: var(--text-dim);
+}
+.cc-node:first-child, .cc-node:last-child{ color: var(--text); border-color: var(--accent-line); box-shadow: 0 0 20px -12px var(--glow); }
+.cc-link{ width: 30px; height: 2px; position: relative; background: var(--line-2); border-radius: 2px; }
+.cc-link::after{
+  content:""; position: absolute; top: 50%; left: 0; width: 6px; height: 6px; margin-top: -3px; border-radius: 50%;
+  background: var(--accent-2); box-shadow: 0 0 8px var(--accent-2);
+  animation: ccflow 2.4s ease-in-out infinite; animation-delay: calc(var(--i,0) * .3s);
+}
+@keyframes ccflow{ 0%{ left: 0; opacity: 0; } 20%{ opacity: 1; } 80%{ opacity: 1; } 100%{ left: 100%; opacity: 0; } }
+
+.experts{ display: grid; gap: 1.1rem; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); }
+.expert{ background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.5rem; position: relative; overflow: hidden; }
+.expert::before{ content:""; position: absolute; right: -40px; top: -40px; width: 140px; height: 140px; border-radius: 50%; background: radial-gradient(circle, var(--accent-soft), transparent 70%); pointer-events: none; }
+.expert-id{ font-family: var(--font-mono); font-size: .78rem; letter-spacing: .18em; text-transform: uppercase; color: var(--text-mute); }
+.expert-id span{ color: var(--accent-2); font-size: 1.6rem; font-weight: 600; letter-spacing: 0; display: block; margin-top: .1rem; text-shadow: 0 0 20px var(--glow); }
+.expert-role{ font-size: .9rem; color: var(--text-dim); margin: .3rem 0 1rem; }
+.expert-thesis{
+  font-family: var(--font-display); font-size: 1.28rem; font-weight: 500; line-height: 1.25;
+  color: var(--text); margin: 0 0 .7rem; padding-left: 1rem; border-left: 2px solid var(--accent);
+  text-wrap: balance;
+}
+.expert-tag{ font-family: var(--font-mono); font-size: .66rem; letter-spacing: .1em; text-transform: uppercase; color: var(--text-mute); margin-bottom: 1.2rem; }
+.expert-h{ font-family: var(--font-mono); font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; color: var(--accent-2); margin-bottom: .6rem; }
+.expert-points{ list-style: none; padding: 0; margin: 0; display: grid; gap: .55rem; }
+.expert-points li{ position: relative; padding-left: 1.3rem; font-size: .9rem; color: var(--text-dim); line-height: 1.5; }
+.expert-points li::before{ content:""; position: absolute; left: 0; top: .5rem; width: 6px; height: 6px; border-radius: 1px; background: var(--accent-2); transform: rotate(45deg); }
+
+/* ---------- test ---------- */
+.quiz-shell{ max-width: 640px; }
+.quiz-frame{ border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); padding: clamp(1.2rem,4vw,1.8rem); position: relative; }
+.quiz-frame::before, .quiz-frame::after{ content:""; position: absolute; width: 14px; height: 14px; border: 1px solid var(--accent-line); }
+.quiz-frame::before{ left: -1px; top: -1px; border-right: 0; border-bottom: 0; }
+.quiz-frame::after{ right: -1px; bottom: -1px; border-left: 0; border-top: 0; }
+
+.quiz-intro .k{ font-family: var(--font-mono); font-size: .7rem; letter-spacing: .16em; text-transform: uppercase; color: var(--accent-2); margin-bottom: .7rem; }
+.quiz-intro .chips{ display: flex; flex-wrap: wrap; gap: .5rem; margin: 1.2rem 0 1.6rem; }
+.quiz-intro .chips span{ display: inline-flex; align-items: center; gap: .4rem; font-family: var(--font-mono); font-size: .74rem; color: var(--text-dim); background: var(--surface-2); border: 1px solid var(--line); padding: .42rem .7rem; border-radius: 7px; }
+.quiz-intro .chips svg{ width: 13px; height: 13px; color: var(--accent-2); }
+
+.qbar{ height: 6px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 999px; overflow: hidden; margin-bottom: .6rem; position: relative; }
+.qbar .fill{ height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); border-radius: 999px; transition: width .4s cubic-bezier(.2,.7,.2,1); box-shadow: 0 0 12px var(--glow); }
+.q-count{ font-family: var(--font-mono); font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--text-mute); margin-bottom: 1.2rem; }
+.q-count b{ color: var(--accent-2); font-weight: 600; }
+.qstage{ animation: qin .3s cubic-bezier(.2,.7,.2,1) both; }
+.qstage.out{ animation: qout .2s ease forwards; }
+@keyframes qin{ from{ opacity: 0; transform: translateX(16px); } to{ opacity: 1; transform: none; } }
+@keyframes qout{ to{ opacity: 0; transform: translateX(-16px); } }
+.q-text{ font-family: var(--font-display); font-size: clamp(1.3rem, 3.6vw, 1.65rem); font-weight: 500; margin-bottom: 1.4rem; text-wrap: balance; letter-spacing: -.01em; }
+.opts{ display: grid; gap: .55rem; }
+.qopt{
+  display: flex; align-items: center; gap: .85rem; width: 100%; text-align: left;
+  padding: 1rem 1.1rem; border-radius: var(--radius-s); border: 1px solid var(--line-2);
+  background: var(--surface); cursor: pointer; font: inherit; font-size: 1rem; color: var(--text);
+  transition: border-color .14s, background .14s, transform .1s, box-shadow .16s;
+}
+.qopt:hover{ border-color: var(--accent-2); background: var(--cyan-soft); transform: translateY(-1px); }
+.qopt .key{ font-family: var(--font-mono); font-size: .72rem; width: 1.6rem; height: 1.6rem; flex-shrink: 0; display: grid; place-items: center; border: 1px solid var(--line-2); border-radius: 6px; color: var(--text-mute); transition: all .14s; }
+.qopt .tick{ margin-left: auto; opacity: 0; transform: scale(.4); transition: .2s; color: var(--accent-2); width: 18px; height: 18px; flex-shrink: 0; }
+.qopt[aria-checked="true"]{ border-color: var(--accent); background: var(--accent-soft); box-shadow: 0 0 0 1px var(--accent), 0 0 28px -10px var(--glow); }
+.qopt[aria-checked="true"] .key{ background: var(--accent); color: #fff; border-color: var(--accent); }
+.qopt[aria-checked="true"] .tick{ opacity: 1; transform: none; }
+.quiz-nav{ display: flex; justify-content: space-between; align-items: center; margin-top: 1.6rem; gap: 1rem; min-height: 44px; }
+.quiz-nav .back{ background: none; border: 0; color: var(--text-dim); font: inherit; font-weight: 600; font-size: .9rem; cursor: pointer; display: inline-flex; align-items: center; gap: .35rem; padding: .5rem .3rem; }
+.quiz-nav .back:hover{ color: var(--text); }
+.quiz-nav .back svg{ width: 15px; height: 15px; }
+.pulse-btn{ animation: cta 1.6s ease-in-out infinite; }
+@keyframes cta{ 0%,100%{ box-shadow: 0 0 26px -10px var(--glow); } 50%{ box-shadow: 0 0 42px -6px var(--glow); } }
+
+/* ---------- resultado ---------- */
+.result{ max-width: 660px; }
+.result-kicker{ font-family: var(--font-mono); font-size: .72rem; letter-spacing: .2em; text-transform: uppercase; color: var(--accent-2); margin-bottom: .9rem; }
+.result-hero{ display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap; margin-bottom: 1.4rem; }
+.gauge{ width: 138px; height: 138px; flex-shrink: 0; position: relative; }
+.gauge svg{ transform: rotate(-90deg); width: 100%; height: 100%; overflow: visible; }
+.gauge circle{ fill: none; stroke-width: 10; }
+.gauge .g-track{ stroke: var(--surface-2); }
+.gauge .g-val{ stroke-linecap: round; transition: stroke-dashoffset 1.1s cubic-bezier(.2,.7,.2,1); filter: drop-shadow(0 0 8px currentColor); }
+.gauge .g-num{ position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--font-mono); font-weight: 600; font-size: 1.9rem; color: var(--text); }
+.result-hero .rh-text{ flex: 1; min-width: 210px; }
+.result-badge{
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-family: var(--font-mono); font-size: .74rem; letter-spacing: .06em; text-transform: uppercase;
+  padding: .4rem .75rem; border-radius: 6px; margin-bottom: .7rem; border: 1px solid currentColor;
+}
+.result-badge.good{ color: var(--good); background: color-mix(in srgb, var(--good) 12%, transparent); }
+.result-badge.warn{ color: var(--warn); background: color-mix(in srgb, var(--warn) 12%, transparent); }
+.result-badge.alert{ color: var(--alert); background: color-mix(in srgb, var(--alert) 12%, transparent); }
+.result h2{ margin-bottom: .5rem; font-size: 1.5rem; }
+.score-track{ margin: 1.5rem 0 .4rem; }
+.score-track .lab{ font-family: var(--font-mono); font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; color: var(--text-mute); margin-bottom: .5rem; }
+.score-track .rail{ height: 10px; border-radius: 999px; background: linear-gradient(90deg, color-mix(in srgb, var(--alert) 55%, var(--surface-2)), var(--surface-2) 48%, color-mix(in srgb, var(--good) 55%, var(--surface-2))); position: relative; border: 1px solid var(--line); }
+.score-track .marker{ position: absolute; top: 50%; width: 16px; height: 16px; border-radius: 50%; background: var(--bg); border: 3px solid var(--accent-2); transform: translate(-50%,-50%); transition: left 1s cubic-bezier(.2,.7,.2,1); box-shadow: 0 0 16px -2px var(--accent-2); }
+.score-track .ends{ display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: .68rem; color: var(--text-mute); margin-top: .45rem; }
+.score-line{ font-size: .9rem; color: var(--text-dim); margin-top: .8rem; }
+.score-line b{ color: var(--text); font-family: var(--font-mono); }
+
+.drivers{ margin-top: 1.7rem; }
+.drivers h3{ font-family: var(--font-mono); font-size: .74rem; letter-spacing: .12em; text-transform: uppercase; color: var(--accent-2); margin-bottom: .6rem; }
+.drivers ul{ list-style: none; padding: 0; margin: 0; display: grid; gap: .4rem; }
+.drivers li{ display: flex; align-items: center; gap: .6rem; font-size: .92rem; color: var(--text-dim); }
+.drivers li .d-dot{ width: 6px; height: 6px; border-radius: 1px; background: var(--alert); flex-shrink: 0; transform: rotate(45deg); box-shadow: 0 0 8px var(--alert); }
+.drivers.pos li .d-dot{ background: var(--good); box-shadow: 0 0 8px var(--good); }
+
+.tips{ margin-top: 1.8rem; display: grid; gap: .7rem; }
+.tip{ border: 1px solid var(--line); border-left: 2px solid var(--accent); border-radius: 0 var(--radius-s) var(--radius-s) 0; background: var(--surface); padding: 1rem 1.15rem; }
+.tip .tip-top{ display: flex; align-items: center; gap: .55rem; margin-bottom: .3rem; }
+.tip .tip-top svg{ width: 16px; height: 16px; color: var(--accent-2); flex-shrink: 0; }
+.tip h4{ font-size: .96rem; }
+.tip p{ font-size: .88rem; color: var(--text-dim); margin: .1rem 0 0; }
+.tip .tip-add{
+  margin-top: .75rem; display: inline-flex; align-items: center; gap: .4rem;
+  font-family: var(--font-body); font-size: .8rem; font-weight: 600;
+  background: var(--surface-2); border: 1px solid var(--line-2); color: var(--text-dim);
+  padding: .42rem .78rem; border-radius: 999px; cursor: pointer; transition: all .14s;
+}
+.tip .tip-add svg{ width: 13px; height: 13px; }
+.tip .tip-add[aria-pressed="true"]{ background: color-mix(in srgb, var(--good) 14%, transparent); color: var(--good); border-color: var(--good); }
+.result-cta{ display: flex; gap: .7rem; flex-wrap: wrap; margin-top: 1.9rem; }
+
+/* ---------- hábitos ---------- */
+.habit{ border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); overflow: hidden; transition: border-color .16s, box-shadow .16s; }
+.habit[data-open="true"]{ border-color: var(--accent-line); box-shadow: 0 0 26px -16px var(--glow); }
+.habit-head{ width: 100%; display: flex; align-items: center; gap: .9rem; padding: 1.1rem 1.2rem; background: none; border: 0; cursor: pointer; text-align: left; font-family: var(--font-body); }
+.habit-head .n{ font-family: var(--font-mono); font-size: .78rem; color: var(--accent-2); background: var(--accent-soft); border: 1px solid var(--line); border-radius: 6px; width: 2rem; height: 2rem; display: grid; place-items: center; flex-shrink: 0; }
+.habit-head .t{ font-weight: 600; font-size: 1.02rem; color: var(--text); flex: 1; }
+.habit-head .inplan{ width: 16px; height: 16px; color: var(--good); flex-shrink: 0; opacity: 0; transition: opacity .2s; }
+.habit[data-inplan="true"] .habit-head .inplan{ opacity: 1; }
+.habit-head .chev{ transition: transform .28s; color: var(--text-mute); flex-shrink: 0; }
+.habit[data-open="true"] .chev{ transform: rotate(180deg); }
+.habit-body{ display: grid; grid-template-rows: 0fr; transition: grid-template-rows .3s ease; }
+.habit[data-open="true"] .habit-body{ grid-template-rows: 1fr; }
+.habit-body > div{ overflow: hidden; }
+.habit-body .inner{ padding: 0 1.2rem 1.2rem 4.1rem; }
+.habit-body p{ font-size: .92rem; color: var(--text-dim); margin: 0 0 .9rem; }
+.habit-body .why{ font-size: .86rem; color: var(--text); background: var(--accent-soft); border: 1px solid var(--line); border-radius: var(--radius-s); padding: .78rem .95rem; margin-bottom: .95rem; }
+.habit-body .why b{ font-family: var(--font-mono); font-size: .64rem; letter-spacing: .1em; text-transform: uppercase; color: var(--accent-2); display: block; margin-bottom: .25rem; }
+.add-plan{ display: inline-flex; align-items: center; gap: .5rem; font-family: var(--font-body); font-size: .85rem; font-weight: 600; background: var(--surface-2); border: 1px solid var(--line-2); color: var(--text-dim); padding: .55rem .9rem; border-radius: 999px; cursor: pointer; transition: all .14s; }
+.add-plan svg{ width: 15px; height: 15px; }
+.add-plan[aria-pressed="true"]{ background: color-mix(in srgb, var(--good) 14%, transparent); color: var(--good); border-color: var(--good); }
+.add-plan:hover{ border-color: var(--accent-line); }
+
+/* ---------- progreso / dashboard ---------- */
+.dash-tiles{ display: grid; gap: 1px; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); background: var(--line); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; margin-bottom: 1.3rem; }
+.d-tile{ background: var(--bg-2); padding: 1.1rem 1.15rem; }
+.d-val{ font-family: var(--font-mono); font-size: clamp(1.15rem, 4.5vw, 1.45rem); font-weight: 600; color: var(--text); letter-spacing: -.02em; }
+.d-label{ font-family: var(--font-mono); font-size: .63rem; letter-spacing: .1em; text-transform: uppercase; color: var(--text-mute); margin-top: .35rem; }
+.prog-grid{ display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(255px,1fr)); }
+.prog-card{ background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.4rem; position: relative; overflow: hidden; }
+.prog-card::before{ content:""; position: absolute; left: 0; top: 0; width: 30px; height: 2px; background: linear-gradient(90deg, var(--accent), var(--accent-2)); }
+.prog-card .eyebrow{ margin-bottom: .8rem; }
+.prog-top{ display: flex; align-items: center; gap: 1rem; margin: .3rem 0 1rem; }
+.prog-count{ font-family: var(--font-mono); font-size: 1.5rem; font-weight: 600; }
+.explored-list{ list-style: none; padding: 0; margin: 0; display: grid; gap: .4rem; }
+.explored-list li{ display: flex; align-items: center; gap: .6rem; font-size: .9rem; color: var(--text-dim); }
+.explored-list li button{ all: unset; cursor: pointer; color: var(--text-dim); }
+.explored-list li button:hover{ color: var(--accent-2); text-decoration: underline; }
+.explored-list li .mark{ width: 18px; height: 18px; border-radius: 4px; flex-shrink: 0; border: 1px solid var(--line-2); display: grid; place-items: center; color: #fff; }
+.explored-list li .mark svg{ width: 11px; height: 11px; }
+.explored-list li.done .mark{ background: var(--good); border-color: var(--good); box-shadow: 0 0 12px -2px var(--good); }
+.explored-list li.done{ color: var(--text); }
+.improve-list{ list-style: none; padding: 0; margin: .2rem 0 0; display: grid; gap: .45rem; }
+.improve-list li{ display: flex; align-items: center; gap: .6rem; font-size: .9rem; color: var(--text-dim); }
+.improve-list li .i-dot{ width: 6px; height: 6px; border-radius: 1px; background: var(--warn); transform: rotate(45deg); flex-shrink: 0; box-shadow: 0 0 8px var(--warn); }
+.plan-list{ list-style: none; padding: 0; margin: 0; display: grid; gap: .5rem; }
+.plan-list li{ display: flex; align-items: center; gap: .5rem; font-size: .89rem; color: var(--text-dim); }
+.plan-list li .p-star{ color: var(--accent-2); flex-shrink: 0; }
+.plan-list li .p-del{ margin-left: auto; background: none; border: 0; color: var(--text-mute); cursor: pointer; padding: .2rem; border-radius: 5px; display: grid; place-items: center; }
+.plan-list li .p-del:hover{ color: var(--alert); background: var(--surface-2); }
+.plan-list li .p-del svg{ width: 14px; height: 14px; }
+.prog-empty{ font-size: .88rem; color: var(--text-mute); }
+.celebrate{ margin-top: 1.4rem; padding: 1.2rem 1.4rem; border-radius: var(--radius); background: linear-gradient(135deg, var(--accent-soft), var(--cyan-soft)); border: 1px solid var(--accent-line); font-size: .94rem; color: var(--text); display: flex; align-items: center; gap: .8rem; box-shadow: 0 0 40px -20px var(--glow); }
+.celebrate .big-emoji{ font-size: 1.5rem; }
+.prog-actions{ margin-top: 1.9rem; display: flex; gap: .7rem; flex-wrap: wrap; }
+
+.ring{ display: block; }
+.ring circle{ fill: none; }
+.ring .track{ stroke: var(--surface-2); }
+.ring .val{ stroke: var(--accent-2); stroke-linecap: round; filter: drop-shadow(0 0 5px var(--accent-2)); transition: stroke-dashoffset .8s cubic-bezier(.2,.7,.2,1); }
+
+/* ---------- fuentes ---------- */
+.src-list{ display: grid; gap: .8rem; max-width: 800px; }
+.src-item{ border: 1px solid var(--line); border-radius: var(--radius-s); background: var(--surface); padding: 1.05rem 1.2rem; transition: border-color .16s; }
+.src-item:hover{ border-color: var(--accent-line); }
+.src-item .meta{ font-family: var(--font-mono); font-size: .68rem; color: var(--accent-2); margin-bottom: .35rem; text-transform: uppercase; letter-spacing: .08em; }
+.src-item .title{ font-size: .93rem; color: var(--text); font-weight: 500; margin-bottom: .35rem; }
+.src-item a{ font-size: .8rem; word-break: break-all; font-family: var(--font-mono); }
+
+/* ---------- footer ---------- */
+.site-footer{ border-top: 1px solid var(--line); padding: 2.2rem clamp(1rem,4vw,2rem); max-width: 1160px; margin: 0 auto; font-size: .82rem; color: var(--text-mute); }
+.site-footer p{ max-width: none; margin: 0 0 .4rem; }
+
+/* ---------- responsive ---------- */
+@media (max-width: 760px){
+  body{ font-size: 16px; }
+  .header-inner{ gap: .5rem; }
+  .brand span.name{ display: none; }
+  main{ padding-bottom: 5.6rem; }
+  .hero{ min-height: 0; }
+  .hero-viz{ width: 150%; right: auto; left: 50%; transform: translate(-50%,-50%); opacity: .3; }
+  .hero-inner{ max-width: 100%; }
+  .scroll-cue{ display: none; }
+  .view .pager{
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 45; margin: 0; max-width: none;
+    padding: .55rem .8rem calc(.55rem + env(safe-area-inset-bottom, 0px));
+    border-top: 1px solid var(--line); border-radius: 0;
+    background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: saturate(150%) blur(12px);
+  }
+  .view .pager button{ padding: .55rem .8rem; background: transparent; }
+  .view .pager button .lbl{ font-size: .87rem; }
+  .result-hero{ gap: 1.1rem; }
+  .gauge{ width: 116px; height: 116px; }
+}
+@media (max-width: 430px){
+  .stat-row{ grid-template-columns: 1fr 1fr; }
+  .dash-tiles{ grid-template-columns: 1fr 1fr; }
+  .age-tabs{ display: flex; width: 100%; }
+  .age-tabs button{ flex: 1; padding: .55rem .3rem; }
+}
+</style>
+
+<div class="bg" aria-hidden="true"><div class="grid"></div></div>
+
+<div class="wrap">
+<header class="site-header">
+  <div class="header-inner">
+    <button class="brand" data-go="inicio" aria-label="Ir al inicio">
+      <svg class="node" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <circle cx="12" cy="12" r="3.4" fill="var(--accent)"/>
+        <circle cx="12" cy="12" r="8.2" stroke="var(--accent-2)" stroke-width="1.3" opacity="0.7"/>
+        <circle cx="12" cy="3.6" r="1.5" fill="var(--accent-2)"/><circle cx="20.4" cy="12" r="1.5" fill="var(--accent-2)"/>
+      </svg>
+      <span class="name">Dormir para Aprender</span>
+    </button>
+    <nav class="nav" id="nav" aria-label="Secciones"></nav>
+    <div class="h-actions">
+      <button class="progress-pill" data-go="progreso" aria-label="Ver mi progreso">
+        <svg class="ring" viewBox="0 0 20 20" aria-hidden="true"><circle class="track" cx="10" cy="10" r="8" stroke-width="3"></circle><circle class="val" id="pillRing" cx="10" cy="10" r="8" stroke-width="3" stroke-dasharray="50.26" stroke-dashoffset="50.26" transform="rotate(-90 10 10)"></circle></svg>
+        <span id="pillText">0/7</span>
+      </button>
+      <button class="icon-btn" id="themeBtn" aria-label="Cambiar entre tema claro y oscuro">
+        <svg id="themeIcon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 13.5A8 8 0 1 1 10.5 4a6.5 6.5 0 0 0 9.5 9.5Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- ============ INICIO ============ -->
+<section class="view" id="view-inicio">
+  <div class="hero">
+    <svg class="hero-viz" viewBox="0 0 760 520" aria-hidden="true">
+      <defs>
+        <radialGradient id="hvCore" cx="50%" cy="50%" r="50%">
+          <stop offset="0" stop-color="var(--accent-2)" stop-opacity="0.9"/>
+          <stop offset="45%" stop-color="var(--accent)" stop-opacity="0.85"/>
+          <stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <g stroke="var(--accent)" stroke-width="1" opacity="0.28" fill="none">
+        <path d="M180 150 L380 260 L500 360"/>
+        <path d="M560 120 L650 300 L600 430"/>
+        <path d="M380 260 L360 470"/><path d="M380 260 L470 180"/><path d="M380 260 L300 340"/>
+        <path d="M180 150 L300 110 L470 180 L560 120"/>
+        <path d="M120 240 L180 150"/><path d="M120 240 L150 380 L360 470 L600 430 L650 300 L560 120"/>
+        <path d="M150 380 L240 300 L300 340 L500 360 L650 300"/>
+      </g>
+      <g class="hv-orbits" stroke="var(--line-2)" stroke-width="1" fill="none">
+        <ellipse cx="380" cy="260" rx="200" ry="90"/>
+        <ellipse cx="380" cy="260" rx="150" ry="150"/>
+        <ellipse cx="380" cy="260" rx="95" ry="180" transform="rotate(28 380 260)"/>
+      </g>
+      <circle class="hv-core" cx="380" cy="260" r="96" fill="url(#hvCore)"/>
+      <circle cx="380" cy="260" r="20" fill="var(--accent-2)"/>
+      <g fill="var(--accent-2)">
+        <circle class="hv-tw" cx="180" cy="150" r="3.2"/><circle class="hv-tw" cx="560" cy="120" r="3"/>
+        <circle class="hv-tw" cx="650" cy="300" r="3.4"/><circle class="hv-tw" cx="600" cy="430" r="3"/>
+        <circle class="hv-tw" cx="360" cy="470" r="3.2"/><circle class="hv-tw" cx="150" cy="380" r="3"/>
+        <circle class="hv-tw" cx="120" cy="240" r="2.6"/><circle class="hv-tw" cx="300" cy="110" r="2.6"/>
+        <circle class="hv-tw" cx="470" cy="180" r="2.8"/><circle class="hv-tw" cx="300" cy="340" r="2.6"/>
+        <circle class="hv-tw" cx="240" cy="300" r="2.4"/><circle class="hv-tw" cx="500" cy="360" r="2.8"/>
+      </g>
+      <circle r="3.6" fill="var(--accent)">
+        <animateMotion dur="4s" repeatCount="indefinite" path="M180 150 L380 260 L500 360"/>
+      </circle>
+      <circle r="3.2" fill="var(--accent-2)">
+        <animateMotion dur="5.5s" repeatCount="indefinite" path="M560 120 L650 300 L600 430"/>
+      </circle>
+      <path class="hv-eeg" d="M40 490 Q 90 490 120 460 T 210 490 Q 260 490 290 445 T 390 490 Q 450 490 480 465 T 590 490 Q 650 490 690 470 T 740 490" fill="none" stroke="var(--accent-2)" stroke-width="2.2" opacity="0.7"/>
+    </svg>
+
+    <div class="hero-inner">
+      <span class="hero-kicker"><span class="dot"></span>Guía interactiva · Sueño y aprendizaje</span>
+      <h1>Dormir no es perder el tiempo. <span class="grad">Es parte de aprender.</span></h1>
+      <p class="lead">Mientras duermes, tu cerebro ordena lo que viviste, guarda lo que estudiaste y se recarga para mañana. Aquí ves cómo funciona y qué puedes cambiar hoy.</p>
+      <div class="hero-actions">
+        <button class="btn btn-primary" data-go="que-pasa">Empezar a explorar</button>
+        <button class="btn btn-ghost" data-go="test">Hacer el test de sueño</button>
+      </div>
+    </div>
+    <div class="scroll-cue" aria-hidden="true"><span class="bar"></span>desliza</div>
+  </div>
+
+  <div class="stat-row">
+    <div class="stat"><div class="n">8&ndash;10 h</div><div class="l">de sueño recomendadas para los 13&ndash;18 años</div><div class="src">AASM 2016 · NSF 2015</div></div>
+    <div class="stat"><div class="n">~7 / 10</div><div class="l">estudiantes de secundaria en EE.&nbsp;UU. duermen menos de lo recomendado</div><div class="src">CDC / MMWR 2018</div></div>
+    <div class="stat"><div class="n">4&ndash;6</div><div class="l">ciclos de sueño en una noche típica, de unos 90 minutos cada uno</div><div class="src">Diekelmann &amp; Born 2010</div></div>
+  </div>
+
+  <h3 style="margin:2.8rem 0 .3rem">Recorre la guía</h3>
+  <p style="color:var(--text-dim);font-size:.94rem">Puedes ir en orden o saltar a lo que te interese. Tu avance se guarda en este dispositivo.</p>
+  <div class="quick-links" id="quickLinks"></div>
+
+  <p class="note" style="margin-top:2rem">
+    <strong>Sobre esta guía:</strong> es material educativo para entender la relación entre sueño, aprendizaje y bienestar. No reemplaza la orientación de un profesional de la salud ni sirve para diagnosticar trastornos del sueño. Si el sueño te preocupa de forma constante, habla con un adulto de confianza o un profesional.
+  </p>
+</section>
+
+<!-- ============ QUÉ PASA CUANDO DUERMES ============ -->
+<section class="view" id="view-que-pasa" hidden>
+  <div class="section-head">
+    <span class="eyebrow">El turno de noche de tu cerebro</span>
+    <h2>¿Qué pasa cuando duermes?</h2>
+    <p class="lead">Dormir no es "apagarse". El cerebro pasa por etapas que se repiten en ciclos toda la noche, y cada una tiene una tarea distinta.</p>
+  </div>
+
+  <div class="simple">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.3h6c0-1 .4-1.8 1-2.3A7 7 0 0 0 12 2Z"/></svg>
+    <span><b>En simple:</b> tu sueño va por vueltas de ~90 min. En cada vuelta pasas de sueño ligero a profundo y terminas en REM (el de los sueños). Al principio de la noche mandan las etapas profundas; hacia la mañana, el REM.</span>
+  </div>
+
+  <div class="card hypno-card">
+    <h3>Una noche de sueño, hora a hora</h3>
+    <p style="font-size:.91rem;color:var(--text-dim)">Cada tramo de color es una etapa. Fíjate cómo el <strong>sueño profundo</strong> aparece sobre todo al inicio y el <strong>REM</strong> gana espacio hacia la mañana. Pasa el cursor o desliza el dedo por el gráfico.</p>
+    <div class="hypno-wrap" id="hypnoWrap">
+      <svg id="hypnoSvg" viewBox="0 0 720 300" role="img" aria-label="Gráfico de las etapas del sueño a lo largo de una noche de unas 8 horas"></svg>
+      <div class="hypno-tip" id="hypnoTip"></div>
+    </div>
+    <div class="hypno-legend">
+      <span><i style="background:var(--st-wake);color:var(--st-wake)"></i>Despierto</span>
+      <span><i style="background:var(--st-rem);color:var(--st-rem)"></i>REM</span>
+      <span><i style="background:var(--st-light);color:var(--st-light)"></i>Ligero</span>
+      <span><i style="background:var(--st-deep);color:var(--st-deep)"></i>Profundo</span>
+    </div>
+  </div>
+
+  <h3 style="margin:2.4rem 0 1rem">Qué hace cada etapa</h3>
+  <div class="stage-list" id="stageList"></div>
+
+  <div class="grid cols-2 stagger" style="margin-top:2rem">
+    <div class="card" style="--i:0">
+      <h3>Consolidación de recuerdos</h3>
+      <p>Durante el sueño, el cerebro "repasa" lo que aprendiste durante el día y lo traslada a un almacenamiento más estable. Por eso estudiar y luego dormir bien ayuda a que la información se quede.</p>
+    </div>
+    <div class="card" style="--i:1">
+      <h3>Limpieza y recuperación</h3>
+      <p>Mientras duermes, el cerebro elimina de forma más eficiente los subproductos que se acumulan cuando estás despierto. Es parte del "mantenimiento" que te permite volver a rendir al día siguiente.</p>
+    </div>
+  </div>
+  <p class="note" style="margin-top:1.4rem">Basado en Diekelmann &amp; Born (2010) y Xie et&nbsp;al. (2013). Ver <button class="linklike" data-go="fuentes">Fuentes</button>.</p>
+</section>
+
+<!-- ============ SUEÑO Y CEREBRO ============ -->
+<section class="view" id="view-cerebro" hidden>
+  <div class="section-head">
+    <span class="eyebrow">Cuando falta sueño</span>
+    <h2>El sueño y el cerebro</h2>
+    <p class="lead">Después de varias noches cortas, algunas funciones del cerebro rinden por debajo de lo normal. No es "flojera": es cómo funciona la biología.</p>
+  </div>
+
+  <div class="simple">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+    <span><b>En simple:</b> dormir poco no te "rompe" nada. Baja un poco tu atención, tu memoria y tu paciencia mientras no recuperes sueño. Al volver a dormir bien de forma constante, suele normalizarse.</span>
+  </div>
+
+  <p style="font-family:var(--font-display);font-size:1.35rem;font-weight:500;margin-bottom:1.2rem">Cuando duermes poco&hellip;</p>
+  <div class="effect-grid stagger" id="effectGrid"></div>
+
+  <p class="note" style="margin-top:1.6rem">
+    Estos efectos son <strong>tendencias observadas en estudios</strong>, no diagnósticos. Varían de una persona a otra. Fuentes: Van&nbsp;Dongen et&nbsp;al. (2003), Short &amp; Louca (2012), Diekelmann &amp; Born (2010).
+  </p>
+</section>
+
+<!-- ============ SUEÑO Y ESTUDIO ============ -->
+<section class="view" id="view-estudio" hidden>
+  <div class="section-head">
+    <span class="eyebrow">En clases y al estudiar</span>
+    <h2>Sueño y rendimiento académico</h2>
+    <p class="lead">El sueño no "da" buenas notas por sí solo, pero sí sostiene lo que hace posible aprender: atención, memoria, ánimo y energía.</p>
+  </div>
+
+  <div class="simple">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m22 10-10-5L2 10l10 5 10-5Z"/><path d="M6 12v5c0 1 2.7 3 6 3s6-2 6-3v-5"/></svg>
+    <span><b>En simple:</b> con menos sueño necesitas más tiempo y más esfuerzo para lo mismo. Con sueño suficiente, la clase "entra" mejor y estudiar cunde más.</span>
+  </div>
+
+  <div class="compare stagger">
+    <div class="path low" style="--i:0">
+      <h3>Noche corta <span class="hrs">5 h</span></h3>
+      <ol>
+        <li>Suena la alarma antes de completar tus ciclos de sueño.</li>
+        <li>Llegas a clases con sueño y te cuesta arrancar.</li>
+        <li>Mantener la concentración exige más esfuerzo y se corta con facilidad.</li>
+        <li>Entender un tema nuevo lleva más tiempo y más repeticiones.</li>
+        <li>Estudiar de noche cunde menos, así que te acuestas aún más tarde.</li>
+        <li>Al día siguiente el cansancio se acumula.</li>
+      </ol>
+    </div>
+    <div class="path ok" style="--i:1">
+      <h3>Noche completa <span class="hrs">8&ndash;9 h</span></h3>
+      <ol>
+        <li>Despiertas después de cerrar varios ciclos completos.</li>
+        <li>Llegas a clases más descansado y de mejor ánimo.</li>
+        <li>Sostener la atención durante la clase cuesta menos.</li>
+        <li>La información nueva se procesa y se conecta con lo que ya sabes.</li>
+        <li>Al estudiar rindes más en menos tiempo.</li>
+        <li>Puedes acostarte a una hora razonable y repetir el ciclo.</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:1.8rem;max-width:var(--maxread)">
+    <h3>La idea principal</h3>
+    <p>Dormir bien es un <strong>factor</strong> del aprendizaje, no una garantía. Influyen también el método de estudio, la motivación y el contexto. Pero de todos esos factores, el sueño es de los más fáciles de mejorar y de los que más rápido se notan.</p>
+  </div>
+  <p class="note" style="margin-top:1.4rem">La relación entre sueño y desempeño escolar está descrita en revisiones sobre sueño en la adolescencia (p.&nbsp;ej. Carskadon, 2011). Ver <button class="linklike" data-go="fuentes">Fuentes</button>.</p>
+</section>
+
+<!-- ============ EXPERTOS ============ -->
+<section class="view" id="view-expertos" hidden>
+  <div class="section-head">
+    <span class="eyebrow">Entrevistas realizadas para este proyecto</span>
+    <h2>Voces expertas</h2>
+    <p class="lead">Dos profesionales de la salud respondieron para esta guía. Sus testimonios reflejan su experiencia clínica; para las recomendaciones generales, la guía se apoya en los organismos científicos citados en Fuentes.</p>
+  </div>
+
+  <p class="eyebrow" style="margin-bottom:.9rem">Cómo se conecta</p>
+  <div class="concept-chain" id="conceptChain"></div>
+
+  <div class="experts" id="expertList"></div>
+
+  <p class="note" style="margin-top:1.9rem">
+    <strong>Sobre estas entrevistas.</strong> Son testimonios de profesionales consultados especialmente para este proyecto y reflejan su experiencia clínica, no una revisión de la literatura. Coinciden en lo esencial con la evidencia actual: la importancia del sueño profundo y de los horarios regulares, el retraso de la melatonina en la adolescencia y el mayor impacto del déficit de sueño <em>crónico</em> frente al ocasional (ver Fuentes: Carskadon 2011; Van&nbsp;Dongen et&nbsp;al. 2003; Diekelmann &amp; Born 2010). Para la cantidad de horas, esta guía usa la recomendación de los organismos de salud del sueño: <strong>8 a 10 horas</strong> para los 13&ndash;18 años (AASM 2016; National Sleep Foundation 2015). Las cifras aproximadas mencionadas en las entrevistas (cerca de 8 y de 8&ndash;9 horas) quedan dentro de ese rango.
+  </p>
+</section>
+
+<!-- ============ CUÁNTO DEBERÍA DORMIR ============ -->
+<section class="view" id="view-cuanto" hidden>
+  <div class="section-head">
+    <span class="eyebrow">Tus horas</span>
+    <h2>¿Cuánto necesito dormir?</h2>
+    <p class="lead">Elige tu rango de edad. Las cifras son recomendaciones generales de organismos de salud del sueño; cada persona puede variar un poco.</p>
+  </div>
+
+  <div class="age-tabs" id="ageTabs" role="group" aria-label="Rango de edad">
+    <button data-age="ninez" aria-pressed="false">6&ndash;12 años</button>
+    <button data-age="adol" aria-pressed="true">13&ndash;18 años</button>
+    <button data-age="joven" aria-pressed="false">18&ndash;25 años</button>
+  </div>
+
+  <div class="rec-panel" id="recPanel" aria-live="polite"></div>
+
+  <h3 style="margin:2.4rem 0 .6rem">Por qué a los adolescentes les cuesta cumplir esas horas</h3>
+  <p style="max-width:var(--maxread);color:var(--text-dim)">En la adolescencia el "reloj interno" se atrasa de forma natural: da sueño más tarde. Si además el colegio empieza temprano, la ventana para dormir se acorta. A eso se suman hábitos y presiones del día a día:</p>
+  <div class="why-list stagger" id="whyList"></div>
+
+  <p class="note" style="margin-top:1.6rem">
+    Recomendaciones de horas: <strong>Academia Americana de Medicina del Sueño (AASM)</strong>, Paruthi et&nbsp;al. (2016) y <strong>National Sleep Foundation</strong>, Hirshkowitz et&nbsp;al. (2015). Sobre el reloj interno y los horarios escolares: Carskadon (2011) y la Academia Americana de Pediatría (2014).
+  </p>
+</section>
+
+<!-- ============ TEST ============ -->
+<section class="view" id="view-test" hidden>
+  <div class="section-head">
+    <span class="eyebrow">2 minutos · privado</span>
+    <h2>Test de sueño</h2>
+    <p class="lead">Responde sobre tus hábitos y recibe tu perfil de sueño con consejos hechos a tu medida.</p>
+  </div>
+  <div class="quiz-shell" id="quizShell"></div>
+</section>
+
+<!-- ============ HÁBITOS ============ -->
+<section class="view" id="view-habitos" hidden>
+  <div class="section-head">
+    <span class="eyebrow">Tu rutina</span>
+    <h2>Hábitos para dormir mejor</h2>
+    <p class="lead">Ninguno es mágico por separado. Juntos y sostenidos en el tiempo, ayudan a que el sueño llegue antes y sea más reparador. Toca cada uno para ver por qué funciona.</p>
+  </div>
+
+  <div class="grid" id="habitList" style="gap:.8rem"></div>
+
+  <div class="card" style="margin-top:1.8rem;max-width:var(--maxread)">
+    <h3>Tu plan</h3>
+    <p style="font-size:.91rem;color:var(--text-dim)">Los hábitos que marques se guardan en <button class="linklike" data-go="progreso">Mi progreso</button>.</p>
+    <div id="planPreview" style="margin-top:.6rem"></div>
+  </div>
+</section>
+
+<!-- ============ PROGRESO ============ -->
+<section class="view" id="view-progreso" hidden>
+  <div class="section-head">
+    <span class="eyebrow">Panel personal</span>
+    <h2>Mi progreso</h2>
+    <p class="lead">Se guarda solo en este dispositivo y en este navegador. Nadie más lo ve.</p>
+  </div>
+
+  <div class="dash-tiles" id="dashTiles"></div>
+
+  <div class="prog-grid">
+    <div class="prog-card">
+      <span class="eyebrow">Avance de la guía</span>
+      <div class="prog-top">
+        <svg class="ring" width="54" height="54" viewBox="0 0 54 54" aria-hidden="true">
+          <circle class="track" cx="27" cy="27" r="23" stroke-width="4"></circle>
+          <circle class="val" id="progRing" cx="27" cy="27" r="23" stroke-width="4" stroke-dasharray="144.51" stroke-dashoffset="144.51" transform="rotate(-90 27 27)"></circle>
+        </svg>
+        <span class="prog-count" id="progCount">0 de 7</span>
+      </div>
+      <ul class="explored-list" id="exploredList"></ul>
+    </div>
+
+    <div class="prog-card">
+      <span class="eyebrow">Perfil de sueño</span>
+      <div id="testResultBox"></div>
+    </div>
+
+    <div class="prog-card">
+      <span class="eyebrow">Qué priorizar</span>
+      <div id="improveBox"></div>
+    </div>
+
+    <div class="prog-card">
+      <span class="eyebrow">Plan de hábitos</span>
+      <ul class="plan-list" id="planList"></ul>
+      <p class="prog-empty" id="planEmpty" hidden>Aún no has añadido hábitos. Ve a <button class="linklike" data-go="habitos">Hábitos</button>.</p>
+    </div>
+  </div>
+
+  <div id="celebrateBox"></div>
+
+  <div class="prog-actions">
+    <button class="btn btn-ghost" data-go="test">Repetir el test</button>
+    <button class="btn btn-ghost" id="resetBtn">Reiniciar mi progreso</button>
+  </div>
+</section>
+
+<!-- ============ FUENTES ============ -->
+<section class="view" id="view-fuentes" hidden>
+  <div class="section-head">
+    <span class="eyebrow">Referencias</span>
+    <h2>Fuentes</h2>
+    <p class="lead">La información de esta guía se apoya en organismos de salud del sueño y en publicaciones científicas revisadas. No se han inventado datos, cifras ni estudios.</p>
+  </div>
+  <div class="src-list" id="srcList"></div>
+  <p class="note" style="margin-top:1.6rem">Los enlaces llevan a la página oficial del organismo o al identificador DOI del artículo. Las recomendaciones de horas de sueño pueden actualizarse; revisa siempre la fuente original.</p>
+</section>
+
+</main>
+
+<footer class="site-footer">
+  <p><strong>Dormir para Aprender</strong> — guía educativa sobre sueño, aprendizaje y bienestar para estudiantes.</p>
+  <p>Material con fines educativos. No sustituye la evaluación de un profesional de la salud ni sirve para diagnosticar trastornos del sueño.</p>
+</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---------------- estado ---------------- */
+  var KEY = "dormirParaAprender.v1";
+  var state = { visited: [], test: null, habits: [] };
+  try{
+    var raw = localStorage.getItem(KEY);
+    if(raw){ var p = JSON.parse(raw); if(p && typeof p === "object"){ state = Object.assign(state, p); } }
+  }catch(e){}
+  if(!Array.isArray(state.visited)) state.visited = [];
+  if(!Array.isArray(state.habits)) state.habits = [];
+  function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
+
+  var TRACKED = ["que-pasa","cerebro","estudio","expertos","cuanto","test","habitos"];
+  var ORDER = ["inicio","que-pasa","cerebro","estudio","expertos","cuanto","test","habitos","progreso","fuentes"];
+
+  var NAV = [
+    ["inicio","Inicio"],
+    ["que-pasa","Qué pasa al dormir"],
+    ["cerebro","Sueño y cerebro"],
+    ["estudio","Sueño y notas"],
+    ["expertos","Expertos"],
+    ["cuanto","Cuánto dormir"],
+    ["test","Test"],
+    ["habitos","Hábitos"],
+    ["fuentes","Fuentes"]
+  ];
+  var TITLES = {
+    inicio:"Inicio", "que-pasa":"¿Qué pasa cuando duermes?", cerebro:"El sueño y el cerebro",
+    estudio:"Sueño y rendimiento académico", expertos:"Voces expertas", cuanto:"¿Cuánto necesito dormir?",
+    test:"Test de sueño", habitos:"Hábitos para dormir mejor", progreso:"Mi progreso", fuentes:"Fuentes"
+  };
+
+  var navEl = document.getElementById("nav");
+  NAV.forEach(function(it){
+    var b = document.createElement("button");
+    b.textContent = it[1]; b.dataset.go = it[0];
+    navEl.appendChild(b);
+  });
+
+  var views = {};
+  document.querySelectorAll(".view").forEach(function(v){ views[v.id.replace("view-","")] = v; });
+
+  /* pager en cada vista */
+  Object.keys(views).forEach(function(id){
+    var idx = ORDER.indexOf(id);
+    var prev = idx > 0 ? ORDER[idx-1] : null;
+    var next = idx < ORDER.length-1 ? ORDER[idx+1] : null;
+    var nav = document.createElement("nav");
+    nav.className = "pager"; nav.setAttribute("aria-label","Ir a otra sección");
+    nav.innerHTML =
+      '<button class="prev"'+(prev?' data-go="'+prev+'"':' disabled')+'>'+
+        '<span class="dir">‹ Anterior</span><span class="lbl">'+(prev?TITLES[prev]:'')+'</span></button>'+
+      '<button class="next"'+(next?' data-go="'+next+'"':' disabled')+'>'+
+        '<span class="dir">Siguiente ›</span><span class="lbl">'+(next?TITLES[next]:'')+'</span></button>';
+    views[id].appendChild(nav);
+  });
+
+  function go(id, opts){
+    opts = opts || {};
+    if(!views[id]) id = "inicio";
+    Object.keys(views).forEach(function(k){ views[k].hidden = (k !== id); });
+    var v = views[id];
+    v.classList.remove("enter");
+    if(!reduceMotion){ void v.offsetWidth; v.classList.add("enter"); }
+
+    navEl.querySelectorAll("button").forEach(function(b){
+      var cur = b.dataset.go === id;
+      b.setAttribute("aria-current", cur ? "page" : "false");
+      if(cur) b.scrollIntoView({ inline: "center", block: "nearest", behavior: opts.noscroll ? "auto" : "smooth" });
+    });
+
+    if(TRACKED.indexOf(id) !== -1 && state.visited.indexOf(id) === -1){
+      state.visited.push(id); save(); renderProgress();
+    }
+    if(("#"+id) !== location.hash){
+      history[opts.replace ? "replaceState" : "pushState"](null, "", "#"+id);
+    }
+    if(!opts.noscroll) window.scrollTo({ top: 0, behavior: "auto" });
+
+    if(id === "progreso") renderProgress();
+    if(id === "habitos") renderPlanPreview();
+    if(id === "que-pasa") requestAnimationFrame(drawHypno);
+
+    var h = v.querySelector("h1,h2");
+    if(h && !opts.noscroll){ h.setAttribute("tabindex","-1"); h.focus({ preventScroll: true }); }
+  }
+
+  document.addEventListener("click", function(e){
+    var t = e.target.closest("[data-go]");
+    if(t){ e.preventDefault(); go(t.dataset.go); }
+  });
+  window.addEventListener("popstate", function(){
+    go((location.hash || "#inicio").slice(1), { replace: true, noscroll: true });
+  });
+
+  /* ---------------- tema ---------------- */
+  var themeBtn = document.getElementById("themeBtn");
+  var themeIcon = document.getElementById("themeIcon");
+  var SUN = '<circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.7"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M18.4 5.6 17 7M7 17l-1.4 1.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>';
+  var MOON = '<path d="M20 13.5A8 8 0 1 1 10.5 4a6.5 6.5 0 0 0 9.5 9.5Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>';
+  function currentDark(){
+    var cur = document.documentElement.getAttribute("data-theme");
+    return cur ? cur === "dark" : true;
+  }
+  function syncThemeIcon(){ themeIcon.innerHTML = currentDark() ? SUN : MOON; }
+  try{ var stT = localStorage.getItem("dpa.theme"); document.documentElement.setAttribute("data-theme", stT === "light" ? "light" : "dark"); }catch(e){ document.documentElement.setAttribute("data-theme","dark"); }
+  syncThemeIcon();
+  themeBtn.addEventListener("click", function(){
+    var next = currentDark() ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", next);
+    try{ localStorage.setItem("dpa.theme", next); }catch(e){}
+    syncThemeIcon();
+    hypnoDrawn = false; drawHypno();
+  });
+
+  /* ---------------- hipnograma ---------------- */
+  var HYP = [
+    [0,0],[0,1],[8,2],[16,3],[45,3],[52,2],[62,1],[75,1],
+    [80,2],[90,3],[110,3],[120,2],[128,1],[145,1],
+    [150,2],[152,0],[158,2],[168,3],[182,3],[190,2],[200,1],[222,1],
+    [228,2],[262,2],[268,1],[292,1],
+    [298,2],[300,0],[306,2],[318,2],[326,1],[352,1],
+    [358,2],[378,2],[384,1],[410,1],[420,2],[430,0],[440,0]
+  ];
+  var STAGE_NAMES = ["Despierto","REM","Ligero","Profundo"];
+  var STAGE_SHORT = ["Desp.","REM","Lig.","Prof."];
+  var STAGE_VARS = ["--st-wake","--st-rem","--st-light","--st-deep"];
+  var hypnoDrawn = false;
+  function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim() || "#888"; }
+
+  function drawHypno(){
+    var svg = document.getElementById("hypnoSvg");
+    var wrap = document.getElementById("hypnoWrap");
+    if(!svg || !wrap) return;
+    var cw = wrap.clientWidth || 600;
+    var mobile = cw < 480;
+    var W = Math.max(300, Math.min(Math.round(cw), 760));
+    var H = mobile ? 288 : 300;
+    var m = mobile ? { t: 18, r: 10, b: 36, l: 46 } : { t: 20, r: 16, b: 40, l: 96 };
+    var iw = W - m.l - m.r, ih = H - m.t - m.b;
+    var maxT = 440;
+    var xs = function(t){ return m.l + (t/maxT)*iw; };
+    var ys = function(s){ return m.t + (s/3)*ih; };
+    var ink = cssVar("--text"), mute = cssVar("--text-mute"), line = cssVar("--line-2");
+    var names = mobile ? STAGE_SHORT : STAGE_NAMES;
+    var fs = mobile ? 10 : 12;
+    var chipX = mobile ? 2 : (m.l - 88);
+    var txtX = mobile ? (m.l - 6) : (m.l - 14);
+    var P = [];
+
+    for(var s=0;s<4;s++){
+      var y = ys(s);
+      P.push('<line x1="'+m.l+'" y1="'+y.toFixed(1)+'" x2="'+(W-m.r)+'" y2="'+y.toFixed(1)+'" stroke="'+line+'" stroke-width="1"/>');
+      P.push('<rect x="'+chipX+'" y="'+(y-5)+'" width="9" height="9" rx="2" fill="'+cssVar(STAGE_VARS[s])+'"/>');
+      P.push('<text x="'+txtX+'" y="'+(y+fs*0.34).toFixed(1)+'" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="'+fs+'" fill="'+ink+'">'+names[s]+'</text>');
+    }
+    for(var h=0;h<=7;h++){
+      var t = h*60; if(t>maxT) break;
+      var x = xs(t);
+      P.push('<line x1="'+x.toFixed(1)+'" y1="'+m.t+'" x2="'+x.toFixed(1)+'" y2="'+(m.t+ih)+'" stroke="'+line+'" stroke-width="1" opacity="0.35"/>');
+      P.push('<text x="'+x.toFixed(1)+'" y="'+(H-18)+'" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="'+mute+'">'+h+'h</text>');
+    }
+    P.push('<text x="'+(m.l+iw/2)+'" y="'+(H-3)+'" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="'+mute+'">horas dormido</text>');
+
+    var steps = [];
+    for(var i=0;i<HYP.length-1;i++){
+      var a = HYP[i], b = HYP[i+1];
+      var x1 = xs(a[0]), x2 = xs(b[0]), y1 = ys(a[1]), y2 = ys(b[1]);
+      steps.push('<path d="M'+x1.toFixed(1)+' '+y1.toFixed(1)+' H'+x2.toFixed(1)+'" stroke="'+cssVar(STAGE_VARS[a[1]])+'" stroke-width="3.4" fill="none" stroke-linecap="round"/>');
+      steps.push('<path d="M'+x2.toFixed(1)+' '+y1.toFixed(1)+' V'+y2.toFixed(1)+'" stroke="'+cssVar(STAGE_VARS[Math.max(a[1],b[1])])+'" stroke-width="2" fill="none" opacity="0.5"/>');
+    }
+    var animate = !hypnoDrawn && !reduceMotion;
+    P.push('<g class="hypno-steps"'+(animate?'':' style="animation:none"')+'>'+steps.join("")+'</g>');
+    P.push('<rect id="hypnoHit" x="'+m.l+'" y="'+m.t+'" width="'+iw+'" height="'+ih+'" fill="transparent" style="cursor:crosshair"/>');
+
+    svg.setAttribute("viewBox","0 0 "+W+" "+H);
+    svg.innerHTML = P.join("");
+    hypnoDrawn = true;
+
+    var hit = document.getElementById("hypnoHit");
+    var tip = document.getElementById("hypnoTip");
+    function stageAt(t){ var stg = HYP[0][1]; for(var k=0;k<HYP.length;k++){ if(HYP[k][0] <= t) stg = HYP[k][1]; else break; } return stg; }
+    function move(ev){
+      var r = svg.getBoundingClientRect();
+      var clientX = ev.touches ? ev.touches[0].clientX : ev.clientX;
+      var px = clientX - r.left;
+      var scale = W / r.width;
+      var tt = ((px*scale - m.l) / iw) * maxT;
+      if(tt < 0 || tt > maxT){ tip.style.opacity = 0; return; }
+      var stg = stageAt(tt);
+      var hh = Math.floor(tt/60), mm = Math.round(tt%60);
+      tip.textContent = hh+"h "+(mm<10?"0":"")+mm+" · "+STAGE_NAMES[stg];
+      var wr = wrap.getBoundingClientRect();
+      tip.style.left = (px + (r.left - wr.left)) + "px";
+      tip.style.top = (ys(stg)/scale + (r.top - wr.top)) + "px";
+      tip.style.opacity = 1;
+    }
+    hit.addEventListener("mousemove", move);
+    hit.addEventListener("touchstart", move, {passive:true});
+    hit.addEventListener("touchmove", move, {passive:true});
+    hit.addEventListener("mouseleave", function(){ tip.style.opacity = 0; });
+    hit.addEventListener("touchend", function(){ setTimeout(function(){ tip.style.opacity = 0; }, 1200); });
+  }
+  var hypnoRT;
+  window.addEventListener("resize", function(){ clearTimeout(hypnoRT); hypnoRT = setTimeout(function(){ hypnoDrawn = false; drawHypno(); }, 180); });
+
+  /* ---------------- etapas ---------------- */
+  var chev = '<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
+  var STAGES = [
+    ["Sueño ligero","--st-light","~50 %","Es la puerta de entrada al sueño y donde pasas más tiempo. El cuerpo se relaja, la respiración y el ritmo cardíaco bajan. Sirve de puente entre etapas y también ayuda a fijar algunos aprendizajes."],
+    ["Sueño profundo","--st-deep","~15&ndash;20 %","El sueño más reparador. Cuesta mucho despertarte y, si lo hacen, quedas aturdido. El cuerpo se recupera físicamente y el cerebro afianza recuerdos recientes, sobre todo de \"hechos y datos\". Se concentra en la primera mitad de la noche."],
+    ["Sueño REM","--st-rem","~20&ndash;25 %","La etapa de los sueños vívidos (REM viene de \"movimiento rápido de ojos\"). El cerebro está muy activo mientras el cuerpo queda casi inmóvil. Ayuda a conectar ideas, procesar emociones y consolidar habilidades. Aumenta hacia la madrugada: por eso al dormir poco se pierde sobre todo REM."],
+    ["Despertares breves","--st-wake","muy breve","Es normal despertar por segundos varias veces por noche, casi siempre sin recordarlo. Forma parte del cierre de cada ciclo antes de empezar el siguiente."]
+  ];
+  var stageList = document.getElementById("stageList");
+  STAGES.forEach(function(s, i){
+    var el = document.createElement("div");
+    el.className = "stage-item"; el.dataset.open = i === 0 ? "true" : "false";
+    el.innerHTML =
+      '<button aria-expanded="'+(i===0)+'"><span class="dot" style="background:var('+s[1]+');color:var('+s[1]+')"></span>'+s[0]+
+        '<span class="pct">'+s[2]+'</span>'+chev+'</button>'+
+      '<div class="body"><div><p>'+s[3]+'</p></div></div>';
+    el.querySelector("button").addEventListener("click", function(){
+      var open = el.dataset.open === "true";
+      el.dataset.open = open ? "false" : "true";
+      this.setAttribute("aria-expanded", String(!open));
+    });
+    stageList.appendChild(el);
+  });
+
+  /* ---------------- efectos ---------------- */
+  function icon(p){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+p+'</svg>'; }
+  var EFFECTS = [
+    ["Atención","<circle cx='12' cy='12' r='3'/><path d='M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z'/>","Cuesta más sostener la atención en algo poco estimulante, como una clase larga.","dormir poco","más distracciones"],
+    ["Concentración","<path d='M12 3v3M12 18v3M3 12h3M18 12h3'/><circle cx='12' cy='12' r='4'/>","Enfocarte en una tarea y mantenerte en ella exige más esfuerzo del habitual.","tarea larga","te desenganchas antes"],
+    ["Memoria","<path d='M12 2a7 7 0 0 0-7 7c0 3 2 4 2 7h10c0-3 2-4 2-7a7 7 0 0 0-7-7Z'/><path d='M9 21h6'/>","Guardar información nueva y recuperarla después funciona peor si no dormiste lo suficiente.","estudias sin dormir","recuerdas menos"],
+    ["Tiempo de reacción","<path d='M13 2 3 14h9l-1 8 10-12h-9l1-8Z'/>","Responder a algo inesperado toma unas fracciones de segundo más.","menos sueño","respuestas más lentas"],
+    ["Aprender cosas nuevas","<path d='M4 19.5A2.5 2.5 0 0 1 6.5 17H20'/><path d='M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z'/>","Entender un concepto por primera vez y conectarlo con lo que ya sabes se vuelve más lento.","tema nuevo","necesitas más repasos"],
+    ["Toma de decisiones","<path d='M18 6 7 17l-4-4'/><path d='m22 10-7.5 7.5'/>","Es más fácil elegir la opción impulsiva (revisar el celular otra vez) en vez de la que te conviene.","cansancio","decides a corto plazo"],
+    ["Estado de ánimo","<circle cx='12' cy='12' r='10'/><path d='M8 15s1.5-2 4-2 4 2 4 2'/><path d='M9 9h.01M15 9h.01'/>","Puedes sentirte más irritable, con menos paciencia o con el ánimo bajo. Suele mejorar al recuperar sueño.","varias noches cortas","más irritabilidad"]
+  ];
+  var eg = document.getElementById("effectGrid");
+  EFFECTS.forEach(function(e, i){
+    var d = document.createElement("div");
+    d.className = "effect"; d.style.setProperty("--i", i);
+    d.innerHTML =
+      '<div class="ico">'+icon(e[1])+'</div><h4>'+e[0]+'</h4><p>'+e[2]+'</p>'+
+      '<div class="chain"><b>'+e[3]+'</b><span aria-hidden="true">→</span> '+e[4]+'</div>';
+    eg.appendChild(d);
+  });
+
+  /* ---------------- edad / horas ---------------- */
+  var AGES = {
+    ninez: { label:"6 a 12 años", range:[9,12], who:"Recomendación de la AASM (Paruthi et al., 2016). La National Sleep Foundation propone un rango similar de 9 a 11 horas." },
+    adol:  { label:"13 a 18 años", range:[8,10], who:"Recomendación de la AASM (Paruthi et al., 2016), coincidente con la National Sleep Foundation para 14 a 17 años (Hirshkowitz et al., 2015)." },
+    joven: { label:"18 a 25 años", range:[7,9], who:"Recomendación de la National Sleep Foundation para adultos jóvenes (Hirshkowitz et al., 2015)." }
+  };
+  var recPanel = document.getElementById("recPanel");
+  function renderRec(key){
+    var a = AGES[key], lo = a.range[0], hi = a.range[1], sLo = 4, sHi = 13;
+    var left = ((lo - sLo)/(sHi - sLo))*100, width = ((hi - lo)/(sHi - sLo))*100;
+    recPanel.innerHTML =
+      '<div class="big">'+lo+'&ndash;'+hi+' <span class="unit">horas / noche</span></div>'+
+      '<div class="rec-bar"><div class="fill" style="left:'+left+'%;width:'+width+'%"></div></div>'+
+      '<div class="rec-scale"><span>4 h</span><span>8 h</span><span>13 h</span></div>'+
+      '<p class="who"><strong>'+a.label+':</strong> '+a.who+'</p>';
+  }
+  document.getElementById("ageTabs").addEventListener("click", function(e){
+    var b = e.target.closest("button"); if(!b) return;
+    this.querySelectorAll("button").forEach(function(x){ x.setAttribute("aria-pressed", x===b ? "true":"false"); });
+    renderRec(b.dataset.age);
+  });
+  renderRec("adol");
+
+  var WHY = [
+    ["Celular y redes en la cama","El contenido está diseñado para engancharte; \"un video más\" empuja la hora de dormir."],
+    ["Luz de las pantallas","La luz intensa de noche puede retrasar la señal de sueño del cerebro."],
+    ["Tareas y estudio hasta tarde","Dejar todo para la noche obliga a elegir entre dormir y terminar."],
+    ["Horario escolar temprano","Si entras muy temprano y el sueño llega tarde, la ventana para dormir se acorta."],
+    ["Actividades extracurriculares","Deporte, trabajo o ensayos por la tarde desplazan todo lo demás."],
+    ["Falta de rutina","Sin una hora fija, el cuerpo no sabe cuándo prepararse para dormir."],
+    ["Cafeína por la tarde","Bebidas energéticas o café tarde pueden mantenerte activado varias horas."],
+    ["Reloj interno atrasado","En la adolescencia da sueño más tarde de forma natural; no es solo \"mala voluntad\"."]
+  ];
+  var wl = document.getElementById("whyList");
+  var checkIco = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+  var plusIco = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>';
+  WHY.forEach(function(w, i){
+    var c = document.createElement("div");
+    c.className = "chip"; c.style.setProperty("--i", i);
+    c.innerHTML = checkIco + "<span><strong>"+w[0]+".</strong> "+w[1]+"</span>";
+    wl.appendChild(c);
+  });
+
+  /* ---------------- quick links (inicio) ---------------- */
+  var QL = [
+    ["que-pasa","¿Qué pasa cuando duermes?","<path d='M12 3a6 6 0 0 0-4 10.5c.6.5 1 1.2 1 2h6c0-.8.4-1.5 1-2A6 6 0 0 0 12 3Z'/><path d='M9 19h6M10 22h4'/>"],
+    ["cerebro","El sueño y el cerebro","<path d='M9.5 2A4.5 4.5 0 0 0 5 6.5 3.5 3.5 0 0 0 4 13a4 4 0 0 0 3 6 3 3 0 0 0 5-2V4a2 2 0 0 0-2.5-2Z'/>"],
+    ["estudio","Sueño y notas","<path d='m22 10-10-5L2 10l10 5 10-5Z'/><path d='M6 12v5c0 1 2.7 3 6 3s6-2 6-3v-5'/>"],
+    ["expertos","Voces expertas","<path d='M8 12h8M8 8h8M8 16h5'/><path d='M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z'/>"],
+    ["cuanto","¿Cuánto necesito dormir?","<circle cx='12' cy='12' r='9'/><path d='M12 7v5l3 2'/>"],
+    ["test","Test de sueño","<path d='M9 11l3 3 8-8'/><path d='M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9'/>"],
+    ["habitos","Hábitos para dormir mejor","<path d='M20 6 9 17l-5-5'/>"]
+  ];
+  var qlEl = document.getElementById("quickLinks");
+  QL.forEach(function(q){
+    var b = document.createElement("button");
+    b.dataset.go = q[0];
+    b.innerHTML = '<span class="qi">'+icon(q[2])+'</span>'+q[1];
+    qlEl.appendChild(b);
+  });
+
+  /* ---------------- EXPERTOS ---------------- */
+  var CHAIN = ["Sueño","Cerebro","Memoria","Atención","Aprendizaje"];
+  var cc = document.getElementById("conceptChain");
+  if(cc){
+    cc.innerHTML = CHAIN.map(function(c, i){
+      return '<span class="cc-node">'+c+'</span>' + (i < CHAIN.length-1 ? '<span class="cc-link" style="--i:'+i+'"></span>' : '');
+    }).join("");
+  }
+  var EXPERTS = [
+    {
+      n: "01",
+      role: "Médico cirujano especialista en pediatría y neonatología",
+      thesis: "El sueño también es parte del aprendizaje.",
+      points: [
+        "Los adolescentes deberían dormir aproximadamente 8 horas.",
+        "El sueño profundo es especialmente importante para el descanso y el aprendizaje.",
+        "Dormir pocas horas puede generar agotamiento físico y mental y afectar la actividad durante el día.",
+        "Un joven que duerme lo suficiente puede tener mejor estado de alerta y más facilidad para captar conocimientos.",
+        "El déficit de sueño crónico es más perjudicial que dormir mal de forma ocasional.",
+        "Señales de mal descanso: somnolencia, fatiga, desorientación, desconcentración y dificultad para procesar información.",
+        "Las pantallas pueden interferir con el sueño; recomienda reducirlas varias horas antes de dormir.",
+        "Una temperatura ambiente confortable ayuda a descansar.",
+        "Antes de dormir, conviene hacer actividades tranquilas como leer o meditar.",
+        "Conviene repartir la carga académica durante la semana y no concentrarla justo antes de una prueba."
+      ]
+    },
+    {
+      n: "02",
+      role: "Neurólogo",
+      thesis: "Durante el sueño se consolidan funciones cognitivas fundamentales.",
+      points: [
+        "El sueño es clave para consolidar memoria, atención, orientación, lenguaje y funciones ejecutivas.",
+        "Los adolescentes deberían dormir aproximadamente 8 a 9 horas.",
+        "Mantener horarios regulares de sueño es importante.",
+        "Higiene del sueño: acostarse cuando aparece el sueño, evitar estimulantes por la noche y mantener una habitación cómoda.",
+        "Recomienda desconectarse de las pantallas antes de dormir y bajar la intensidad de la luz.",
+        "En la adolescencia cuesta más dormir temprano: la melatonina se libera más tarde y el reloj biológico se desplaza.",
+        "La falta de sueño puede producir fatiga, irritabilidad, desatención y peor rendimiento académico.",
+        "El déficit de sueño crónico es más perjudicial que episodios ocasionales de mal sueño.",
+        "Recomienda organizar el tiempo entre estudio, deporte, vida social y descanso."
+      ]
+    }
+  ];
+  var elx = document.getElementById("expertList");
+  EXPERTS.forEach(function(ex){
+    var d = document.createElement("article");
+    d.className = "expert";
+    d.innerHTML =
+      '<div class="expert-id">Experto <span>'+ex.n+'</span></div>'+
+      '<div class="expert-role">'+ex.role+'</div>'+
+      '<blockquote class="expert-thesis">'+ex.thesis+'</blockquote>'+
+      '<div class="expert-tag">Entrevista realizada para este proyecto</div>'+
+      '<div class="expert-h">Ideas principales</div>'+
+      '<ul class="expert-points">'+ ex.points.map(function(p){ return '<li>'+p+'</li>'; }).join("") +'</ul>';
+    elx.appendChild(d);
+  });
+
+  /* ---------------- HÁBITOS ---------------- */
+  var HABITS = [
+    ["Mantén horarios parecidos, también el fin de semana",
+     "Acuéstate y levántate a horas similares todos los días, con un margen de una hora como mucho.",
+     "Tu cuerpo tiene un reloj interno que aprende tus horarios. Si son estables, empieza a darte sueño y a despertarte casi solo. Los cambios grandes el fin de semana lo desajustan y el lunes cuesta el doble."],
+    ["Baja el uso de pantallas la última hora",
+     "La hora antes de dormir, deja el celular lejos de la cama, baja el brillo y evita el scroll o los videos que enganchan.",
+     "Dos motivos: la luz intensa de noche puede retrasar la señal de sueño del cerebro, y el contenido de redes te mantiene mentalmente activado justo cuando necesitas bajar revoluciones."],
+    ["No dejes todo el estudio para la noche",
+     "Organiza las tareas para no tener que elegir entre dormir y terminar. Si algo queda sin hacer, muchas veces rinde más terminarlo temprano al día siguiente.",
+     "Estudiar de madrugada retrasa la hora de dormir y encima cunde menos, porque el cansancio baja tu concentración. Además, dormir después de estudiar ayuda a fijar lo aprendido."],
+    ["Crea una rutina para \"aterrizar\" antes de dormir",
+     "Los mismos 20&ndash;30 minutos cada noche: luz baja, algo tranquilo (leer, ducha, estirar, música suave) y siempre en el mismo orden.",
+     "Repetir la misma secuencia le enseña al cerebro que viene el sueño. Es la misma lógica que un calentamiento antes de hacer deporte: prepara al cuerpo para lo que sigue."],
+    ["Que tu habitación invite a dormir",
+     "Lo más oscura, fresca y silenciosa posible. Si puedes, que la cama sea solo para dormir y no tu escritorio ni tu sala de estar.",
+     "La oscuridad y una temperatura algo fresca son señales que el cuerpo asocia con la noche. Si usas la cama para todo el día, el cerebro deja de asociarla con dormir."],
+    ["Cuida la cafeína desde el mediodía",
+     "Café, té, bebidas energéticas y algunas gaseosas: intenta que la última sea alrededor del mediodía.",
+     "La cafeína puede seguir haciendo efecto 5&ndash;6 horas después, o más. Una energética a las 6 de la tarde todavía te está afectando a medianoche, aunque no lo notes."],
+    ["Busca luz natural por la mañana",
+     "Al despertar, ábrete a la luz del día: sube la persiana, desayuna junto a una ventana o camina un poco al aire libre.",
+     "La luz de la mañana le dice a tu reloj interno que el día empezó, y eso adelanta la hora a la que te dará sueño esa noche. Es una de las señales más potentes para reajustar el ciclo."],
+    ["Si no llega el sueño, no te quedes peleando en la cama",
+     "Si llevas unos 20 minutos sin dormir, levántate, haz algo calmado con poca luz y vuelve a la cama cuando tengas sueño de verdad.",
+     "Quedarte despierto y frustrado en la cama hace que el cerebro asocie ese lugar con \"estar activado\". Salir y volver rompe ese vínculo."]
+  ];
+  var habitList = document.getElementById("habitList");
+  HABITS.forEach(function(h, i){
+    var el = document.createElement("div");
+    el.className = "habit"; el.dataset.open = "false";
+    el.dataset.inplan = state.habits.indexOf(i) !== -1 ? "true" : "false";
+    el.dataset.habit = i;
+    el.innerHTML =
+      '<button class="habit-head" aria-expanded="false">'+
+        '<span class="n">'+(i+1)+'</span><span class="t">'+h[0]+'</span>'+
+        '<svg class="inplan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>'+chev+
+      '</button>'+
+      '<div class="habit-body"><div><div class="inner">'+
+        '<p>'+h[1]+'</p>'+
+        '<div class="why"><b>Por qué ayuda</b>'+h[2]+'</div>'+
+        '<button class="add-plan" aria-pressed="'+(el.dataset.inplan==="true")+'" data-habit="'+i+'"></button>'+
+      '</div></div></div>';
+    el.querySelector(".habit-head").addEventListener("click", function(){
+      var open = el.dataset.open === "true";
+      el.dataset.open = open ? "false" : "true";
+      this.setAttribute("aria-expanded", String(!open));
+    });
+    el.querySelector(".add-plan").addEventListener("click", function(){ toggleHabit(i); });
+    habitList.appendChild(el);
+    paintHabitBtn(el.querySelector(".add-plan"), state.habits.indexOf(i) !== -1);
+  });
+  function paintHabitBtn(btn, on){
+    btn.setAttribute("aria-pressed", String(on));
+    btn.innerHTML = on ? checkIco + ' En mi plan' : plusIco + ' Añadir a mi plan';
+  }
+  function toggleHabit(i, force){
+    var pos = state.habits.indexOf(i);
+    var on = force === undefined ? pos === -1 : force;
+    if(on && pos === -1) state.habits.push(i);
+    if(!on && pos !== -1) state.habits.splice(pos, 1);
+    save();
+    var habitEl = document.querySelector('.habit[data-habit="'+i+'"]');
+    if(habitEl){ habitEl.dataset.inplan = String(on); paintHabitBtn(habitEl.querySelector(".add-plan"), on); }
+    document.querySelectorAll('.tip-add[data-habit="'+i+'"]').forEach(function(b){
+      b.setAttribute("aria-pressed", String(on));
+      b.innerHTML = on ? checkIco + ' En mi plan' : plusIco + ' Añadir a mi plan';
+    });
+    renderProgress(); renderPlanPreview();
+  }
+  function renderPlanPreview(){
+    var box = document.getElementById("planPreview");
+    if(!box) return;
+    if(!state.habits.length){ box.innerHTML = '<p class="prog-empty" style="margin:0">Todavía no has añadido ningún hábito.</p>'; return; }
+    var ul = '<ul class="plan-list" style="margin:0">';
+    state.habits.slice().sort(function(a,b){return a-b;}).forEach(function(i){
+      ul += '<li><span class="p-star">✦</span>'+HABITS[i][0]+'</li>';
+    });
+    box.innerHTML = ul + '</ul>';
+  }
+
+  /* ---------------- TEST ---------------- */
+  var QUESTIONS = [
+    { q:"¿Cuántas horas duermes normalmente en días de clases?", tag:"horas",
+      o:[["Menos de 6 horas",0],["Entre 6 y 7 horas",1],["Entre 8 y 10 horas",2],["Más de 10 horas",1]],
+      tip:["horas","Apunta a 8&ndash;10 horas. Prueba adelantar tu hora de dormir 15 minutos cada pocos días hasta llegar."] },
+    { q:"¿A qué hora sueles acostarte entre semana?", tag:"horario",
+      o:[["Después de medianoche",0],["Entre las 11 pm y las 12",1],["Entre las 10 y las 11 pm",2],["Antes de las 10 pm",2]],
+      tip:["horario","Una hora de acostarte más temprano y estable ayuda a que el sueño llegue solo."] },
+    { q:"¿Cuánto cambian tus horarios de sueño entre semana y fin de semana?", tag:"rutina",
+      o:[["Más de 2 horas de diferencia",0],["Entre 1 y 2 horas",1],["Menos de 1 hora",2]],
+      tip:["rutina","Mantener horarios parecidos el fin de semana evita el \"jet lag\" del lunes."] },
+    { q:"¿Usas el celular u otras pantallas en la última hora antes de dormir?", tag:"pantallas",
+      o:[["Casi siempre",0],["A veces",1],["Casi nunca",2]],
+      tip:["pantallas","Deja el celular fuera de la cama y baja el brillo la última hora. Cambia el scroll por algo tranquilo."] },
+    { q:"¿Cuánto tardas normalmente en quedarte dormido?", tag:"conciliar",
+      o:[["Más de 45 minutos",0],["Entre 20 y 45 minutos",1],["Menos de 20 minutos",2]],
+      tip:["rutina","Si no llega el sueño en ~20 min, levántate, haz algo calmado con poca luz y vuelve cuando tengas sueño."] },
+    { q:"¿Te despiertas durante la noche y te cuesta volver a dormir?", tag:"despertares",
+      o:[["Casi todas las noches",0],["Algunas noches",1],["Casi nunca",2]],
+      tip:["entorno","Una habitación oscura, fresca y silenciosa reduce los despertares. Si es frecuente y te preocupa, coméntalo con un adulto o profesional."] },
+    { q:"¿Tomas bebidas con cafeína (café, té, energéticas, algunas gaseosas) por la tarde o noche?", tag:"cafeína",
+      o:[["A diario",0],["A veces",1],["Casi nunca",2]],
+      tip:["cafeina","La cafeína puede durar 5&ndash;6 horas o más. Intenta que la última sea al mediodía."] },
+    { q:"¿Te sientes con sueño o te cuesta mantenerte despierto durante las clases?", tag:"somnolencia",
+      o:[["Casi todos los días",0],["Algunos días",1],["Casi nunca",2]],
+      tip:["luz","La somnolencia diurna suele ser señal de sueño insuficiente. Buscar luz natural por la mañana ayuda a despertar el reloj interno."] },
+    { q:"Cuando dormiste poco, ¿sientes que te cuesta concentrarte o recordar lo que estudiaste?", tag:"concentración",
+      o:[["Mucho",0],["Algo",1],["Poco o nada",2]],
+      tip:["estudio","Estudiar y luego dormir bien ayuda a fijar lo aprendido. Evita dejar todo para la madrugada."] },
+    { q:"¿Notas cambios en tu ánimo (más irritable o desanimado) cuando duermes poco?", tag:"ánimo",
+      o:[["Casi siempre",0],["A veces",1],["Casi nunca",2]],
+      tip:["animo","El ánimo y el sueño se influyen mutuamente. Cuidar las horas de sueño suele mejorar la paciencia y la energía."] },
+    { q:"¿Duermes bastante más los fines de semana para \"recuperar\" sueño?", tag:"deuda",
+      o:[["Sí, muchas horas más",0],["Un poco más",1],["Duermo parecido",2]],
+      tip:["rutina","Dormir de más el finde suele indicar deuda de sueño acumulada entre semana. Mejor repartir esas horas cada noche."] }
+  ];
+  var MAX = QUESTIONS.length * 2;
+  var answers = new Array(QUESTIONS.length).fill(null);
+  var qi = 0;
+  var quizShell = document.getElementById("quizShell");
+  var TIP_HABIT = { horas:0, horario:0, rutina:3, pantallas:1, entorno:4, cafeina:5, luz:6, estudio:2 };
+  var TIPLABEL = { horas:"Horas de sueño", horario:"Hora de acostarte", rutina:"Rutina y constancia", pantallas:"Pantallas de noche", entorno:"Tu habitación", cafeina:"Cafeína", luz:"Luz natural", estudio:"Estudio y sueño", animo:"Ánimo", mantener:"Mantener la base" };
+  var TIP_ICON = {
+    horas:"<circle cx='12' cy='12' r='9'/><path d='M12 7v5l3 2'/>",
+    horario:"<circle cx='12' cy='12' r='9'/><path d='M12 7v5l3 2'/>",
+    rutina:"<path d='M3 12a9 9 0 1 0 9-9'/><path d='M3 4v5h5'/>",
+    pantallas:"<rect x='7' y='2' width='10' height='20' rx='2'/><path d='M11 18h2'/>",
+    entorno:"<path d='M3 21h18M5 21V10l7-6 7 6v11'/>",
+    cafeina:"<path d='M4 8h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V8Z'/><path d='M17 9h2a2 2 0 0 1 0 4h-2'/>",
+    luz:"<circle cx='12' cy='12' r='4'/><path d='M12 3v2M12 19v2M3 12h2M19 12h2M6 6l1.5 1.5M16.5 16.5 18 18M18 6l-1.5 1.5M7.5 16.5 6 18'/>",
+    estudio:"<path d='M4 19.5A2.5 2.5 0 0 1 6.5 17H20'/><path d='M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z'/>",
+    animo:"<circle cx='12' cy='12' r='10'/><path d='M8 14s1.5 2 4 2 4-2 4-2'/><path d='M9 9h.01M15 9h.01'/>",
+    mantener:"<path d='M20 6 9 17l-5-5'/>"
+  };
+
+  function renderQuiz(){
+    if(state.test && qi === 0 && answers.every(function(a){ return a === null; })){
+      renderResult(state.test, true);
+      return;
+    }
+    if(qi === 0 && answers.every(function(a){ return a === null; })){
+      renderIntro();
+      return;
+    }
+    renderQuestion(false);
+  }
+
+  function renderIntro(){
+    quizShell.innerHTML =
+      '<div class="quiz-frame">'+
+      '<div class="quiz-intro qstage">'+
+        '<div class="k">// Análisis de hábitos de sueño</div>'+
+        '<h3 style="font-size:1.4rem">11 preguntas rápidas sobre tu descanso</h3>'+
+        '<div class="chips">'+
+          '<span>'+icon("<circle cx=\'12\' cy=\'12\' r=\'9\'/><path d=\'M12 7v5l3 2\'/>")+' ~2 minutos</span>'+
+          '<span>'+icon("<rect x=\'3\' y=\'11\' width=\'18\' height=\'11\' rx=\'2\'/><path d=\'M7 11V7a5 5 0 0 1 10 0v4\'/>")+' Solo en tu dispositivo</span>'+
+          '<span>'+icon("<path d=\'M9 11l3 3 8-8\'/><path d=\'M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9\'/>")+' Autoevaluación, no diagnóstico</span>'+
+        '</div>'+
+        '<p style="font-size:.94rem;color:var(--text-dim)">No hay respuestas buenas ni malas. Contesta con lo que realmente haces una semana normal.</p>'+
+        '<button class="btn btn-primary" id="quizStart" style="margin-top:.4rem">Iniciar análisis</button>'+
+      '</div>'+
+      '</div>';
+    document.getElementById("quizStart").addEventListener("click", function(){ qi = 0; renderQuestion(true); });
+  }
+
+  function renderQuestion(fresh){
+    var q = QUESTIONS[qi];
+    var pct = (qi / QUESTIONS.length) * 100;
+    var last = qi === QUESTIONS.length - 1;
+    var nn = (qi+1) < 10 ? "0"+(qi+1) : (qi+1);
+    var html =
+      '<div class="quiz-frame">'+
+      '<div class="qbar"><div class="fill" style="width:'+pct+'%"></div></div>'+
+      '<div class="q-count">Pregunta <b>'+nn+'</b> / '+QUESTIONS.length+'</div>'+
+      '<div class="qstage" id="qstage" tabindex="-1">'+
+        '<div class="q-text">'+q.q+'</div>'+
+        '<div class="opts" role="radiogroup" aria-label="Opciones">';
+    q.o.forEach(function(opt, idx){
+      var on = answers[qi] === idx;
+      html +=
+        '<button class="qopt" role="radio" aria-checked="'+on+'" data-i="'+idx+'">'+
+          '<span class="key">'+(idx+1)+'</span><span class="qopt-t">'+opt[0]+'</span>'+
+          '<svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>'+
+        '</button>';
+    });
+    html +=
+        '</div>'+
+        '<div class="quiz-nav">'+
+          '<button class="back" data-nav="prev"'+(qi===0?' style="visibility:hidden"':'')+'>'+
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg> Atrás</button>'+
+          '<button class="btn btn-primary" data-nav="next" id="qNext"'+(answers[qi]===null?' disabled':'')+'>'+(last?'Ver mi perfil':'Siguiente')+'</button>'+
+        '</div>'+
+      '</div>'+
+      '</div>';
+    quizShell.innerHTML = html;
+
+    var stage = document.getElementById("qstage");
+    var nextBtn = document.getElementById("qNext");
+
+    function choose(idx){
+      answers[qi] = idx;
+      stage.querySelectorAll(".qopt").forEach(function(o){ o.setAttribute("aria-checked", String(+o.dataset.i === idx)); });
+      nextBtn.disabled = false;
+      if(last){ nextBtn.classList.add("pulse-btn"); }
+      else { advance(1); }
+    }
+    stage.querySelectorAll(".qopt").forEach(function(o){
+      o.addEventListener("click", function(){ choose(+this.dataset.i); });
+    });
+    document.querySelector('[data-nav="prev"]').addEventListener("click", function(){ if(qi>0){ qi--; advance(-1, true); } });
+    nextBtn.addEventListener("click", function(){
+      if(answers[qi] === null) return;
+      if(last) finishQuiz();
+      else advance(1);
+    });
+
+    stage.onkeydown = function(ev){
+      if(/^[1-9]$/.test(ev.key)){
+        var n = +ev.key - 1;
+        if(n < q.o.length){ ev.preventDefault(); choose(n); }
+      } else if(ev.key === "ArrowRight" || ev.key === "ArrowDown"){
+        ev.preventDefault(); var c = answers[qi]===null?0:Math.min(q.o.length-1, answers[qi]+1); focusOpt(c);
+      } else if(ev.key === "ArrowLeft" || ev.key === "ArrowUp"){
+        ev.preventDefault(); var c2 = answers[qi]===null?0:Math.max(0, answers[qi]-1); focusOpt(c2);
+      }
+    };
+    function focusOpt(n){ var el = stage.querySelectorAll(".qopt")[n]; if(el){ el.focus(); } }
+
+    if(fresh){ setTimeout(function(){ stage.focus(); }, 40); }
+  }
+
+  var animating = false;
+  function advance(dir, immediate){
+    if(animating) return;
+    var stage = document.getElementById("qstage");
+    var move = function(){
+      if(dir > 0){ if(qi < QUESTIONS.length - 1){ qi++; renderQuestion(false); } else { finishQuiz(); return; } }
+      else { renderQuestion(false); }
+      var s = document.getElementById("qstage"); if(s) s.focus();
+    };
+    if(reduceMotion || immediate || !stage){ move(); return; }
+    animating = true;
+    stage.classList.add("out");
+    setTimeout(function(){ animating = false; move(); }, 200);
+  }
+
+  function finishQuiz(){
+    var score = 0;
+    answers.forEach(function(a,i){ score += QUESTIONS[i].o[a][1]; });
+    var cat = score >= 17 ? "good" : (score >= 11 ? "warn" : "alert");
+    var result = { score: score, max: MAX, cat: cat, date: new Date().toISOString(), answers: answers.slice() };
+    state.test = result; save(); renderProgress();
+    renderResult(result, false);
+  }
+
+  var CAT_INFO = {
+    good:  { badge:"Buenos hábitos de sueño", title:"Tus hábitos de sueño se ven sólidos", text:"Tus respuestas apuntan a una rutina que favorece el descanso. Mantenerla es lo más valioso: la constancia es lo que más pesa. Revisa igualmente los consejos por si hay algo que afinar." },
+    warn:  { badge:"Algunos hábitos por mejorar", title:"Vas bien, con margen para ajustar algunas cosas", text:"Hay partes de tu rutina que ayudan y otras que podrían estar restándote calidad o cantidad de sueño. Los consejos de abajo están elegidos según tus respuestas: prueba con uno o dos a la vez." },
+    alert: { badge:"Tu rutina podría estar afectando tu descanso", title:"Varias señales apuntan a que podrías dormir poco o mal", text:"Es habitual entre estudiantes y no significa que tengas un problema de salud. Vale la pena tomarlo en serio: empieza por los cambios de abajo, de a poco. Si el sueño te preocupa de forma constante, habla con un adulto de confianza o un profesional." }
+  };
+
+  function fmtDate(iso){
+    var d = new Date(iso);
+    try{ return d.toLocaleDateString("es-ES", { day:"numeric", month:"long", year:"numeric" }); }
+    catch(e){ return d.toISOString().slice(0,10); }
+  }
+  function cap(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
+  function driverTags(res){
+    var d = [];
+    res.answers.forEach(function(a,i){ if(a === 0) d.push(QUESTIONS[i].tag); });
+    return d;
+  }
+
+  function renderResult(result, resumed){
+    var info = CAT_INFO[result.cat];
+    var pct = Math.round((result.score / result.max) * 100);
+    var C = 339.29;
+
+    var tips = [], seen = {};
+    result.answers.forEach(function(a,i){
+      if(a <= 1 && QUESTIONS[i].tip && (a === 0 || result.cat !== "good")){
+        var t = QUESTIONS[i].tip;
+        if(!seen[t[0]]){ seen[t[0]] = 1; tips.push(t); }
+      }
+    });
+    if(!tips.length) tips.push(["mantener","Sigue así: horarios estables, poca pantalla antes de dormir y luz natural por la mañana. Es la base."]);
+
+    var drivers = driverTags(result);
+
+    var catColor = result.cat === "good" ? "var(--good)" : result.cat === "warn" ? "var(--warn)" : "var(--alert)";
+    var html =
+      '<div class="quiz-frame"><div class="result qstage">'+
+      '<div class="result-kicker">// Perfil de sueño'+(resumed ? '  ·  guardado el '+fmtDate(result.date) : '')+'</div>'+
+      '<div class="result-hero">'+
+        '<div class="gauge">'+
+          '<svg viewBox="0 0 120 120" aria-hidden="true">'+
+            '<circle class="g-track" cx="60" cy="60" r="54"></circle>'+
+            '<circle class="g-val" id="gaugeVal" cx="60" cy="60" r="54" stroke-dasharray="'+C+'" stroke-dashoffset="'+C+'" style="stroke:'+catColor+';color:'+catColor+'"></circle>'+
+          '</svg>'+
+          '<div class="g-num" id="gaugeNum">0%</div>'+
+        '</div>'+
+        '<div class="rh-text">'+
+          '<div class="result-badge '+result.cat+'">'+info.badge+'</div>'+
+          '<h2>'+info.title+'</h2>'+
+        '</div>'+
+      '</div>'+
+      '<p style="color:var(--text-dim)">'+info.text+'</p>'+
+      '<div class="score-track">'+
+        '<div class="lab">Índice de hábitos</div>'+
+        '<div class="rail"><div class="marker" id="scoreMarker" style="left:0%"></div></div>'+
+        '<div class="ends"><span>Por mejorar</span><span>Sólido</span></div>'+
+        '<p class="score-line">Puntaje: <b>'+result.score+' / '+result.max+'</b> &nbsp;·&nbsp; un número más alto = hábitos más favorables al descanso.</p>'+
+      '</div>';
+
+    if(drivers.length){
+      html += '<div class="drivers"><h3>Lo que más está pesando en tu resultado</h3><ul>';
+      drivers.forEach(function(tag){ html += '<li><span class="d-dot"></span>'+cap(tag)+'</li>'; });
+      html += '</ul></div>';
+    } else {
+      html += '<div class="drivers pos"><h3>Lo que ya tienes a favor</h3><ul>';
+      var good = [];
+      result.answers.forEach(function(a,i){ if(a === 2) good.push(QUESTIONS[i].tag); });
+      good.slice(0,4).forEach(function(tag){ html += '<li><span class="d-dot"></span>'+cap(tag)+'</li>'; });
+      html += '</ul></div>';
+    }
+
+    html += '<h3 style="margin:1.9rem 0 .3rem;font-size:1.1rem">Tus consejos</h3><div class="tips">';
+    tips.forEach(function(t){
+      var hb = TIP_HABIT[t[0]];
+      var add = (hb !== undefined)
+        ? '<button class="tip-add" data-habit="'+hb+'" aria-pressed="'+(state.habits.indexOf(hb)!==-1)+'">'+
+            (state.habits.indexOf(hb)!==-1 ? checkIco+' En mi plan' : plusIco+' Añadir a mi plan')+'</button>'
+        : '';
+      html +=
+        '<div class="tip">'+
+          '<div class="tip-top">'+icon(TIP_ICON[t[0]]||TIP_ICON.mantener)+'<h4>'+(TIPLABEL[t[0]]||"Consejo")+'</h4></div>'+
+          '<p>'+t[1]+'</p>'+ add +
+        '</div>';
+    });
+    html += '</div>'+
+      '<div class="result-cta">'+
+        '<button class="btn btn-primary" data-go="habitos">Ver todos los hábitos</button>'+
+        '<button class="btn btn-ghost" data-nav="retry">Volver a hacer el test</button>'+
+      '</div>'+
+      '<p class="note" style="margin-top:1.4rem">Recuerda: esto no es un diagnóstico. Es una foto de tus hábitos actuales para ayudarte a decidir qué cambiar.</p>'+
+      '</div></div>';
+
+    quizShell.innerHTML = html;
+
+    quizShell.querySelector('[data-nav="retry"]').addEventListener("click", function(){
+      answers = new Array(QUESTIONS.length).fill(null); qi = 0; state.test = null; save(); renderProgress(); renderIntro();
+    });
+    quizShell.querySelectorAll(".tip-add").forEach(function(b){
+      b.addEventListener("click", function(){ toggleHabit(+this.dataset.habit); });
+    });
+
+    var gv = document.getElementById("gaugeVal"), gn = document.getElementById("gaugeNum"), mk = document.getElementById("scoreMarker");
+    if(reduceMotion){
+      gv.style.strokeDashoffset = C * (1 - pct/100);
+      gn.textContent = pct + "%";
+      mk.style.left = pct + "%";
+    } else {
+      requestAnimationFrame(function(){
+        setTimeout(function(){
+          gv.style.strokeDashoffset = C * (1 - pct/100);
+          mk.style.left = pct + "%";
+        }, 60);
+      });
+      var t0 = performance.now(), dur = 1000;
+      (function tick(now){
+        var p = Math.min(1, (now - t0)/dur), e = 1 - Math.pow(1-p, 3);
+        gn.textContent = Math.round(pct * e) + "%";
+        if(p < 1) requestAnimationFrame(tick);
+      })(t0);
+    }
+  }
+
+  renderQuiz();
+
+  /* ---------------- PROGRESO ---------------- */
+  var SEC_LABELS = {
+    "que-pasa":"¿Qué pasa cuando duermes?", "cerebro":"El sueño y el cerebro",
+    "estudio":"Sueño y rendimiento académico", "expertos":"Voces expertas", "cuanto":"¿Cuánto necesito dormir?",
+    "test":"Test de sueño", "habitos":"Hábitos para dormir mejor"
+  };
+  function setRing(el, frac, circ){
+    if(!el) return;
+    el.setAttribute("stroke-dasharray", circ.toFixed(2));
+    el.setAttribute("stroke-dashoffset", (circ * (1 - frac)).toFixed(2));
+  }
+  function tile(label, val){ return '<div class="d-tile"><div class="d-val">'+val+'</div><div class="d-label">'+label+'</div></div>'; }
+
+  function renderProgress(){
+    var TOTAL = TRACKED.length;
+    var n = state.visited.filter(function(v){ return TRACKED.indexOf(v) !== -1; }).length;
+    var frac = n / TOTAL;
+    document.getElementById("pillText").textContent = n + "/" + TOTAL;
+    setRing(document.getElementById("pillRing"), frac, 50.26);
+    var pc = document.getElementById("progCount"); if(pc) pc.textContent = n + " de " + TOTAL;
+    setRing(document.getElementById("progRing"), frac, 144.51);
+
+    var dt = document.getElementById("dashTiles");
+    if(dt){
+      var catShort = state.test ? ({good:"Alta", warn:"Media", alert:"Baja"})[state.test.cat] : "—";
+      dt.innerHTML =
+        tile("Avance guía", Math.round(frac*100) + "%") +
+        tile("Secciones", n + "/" + TOTAL) +
+        tile("Calidad hábitos", catShort) +
+        tile("Plan hábitos", state.habits.length + "/" + HABITS.length);
+    }
+
+    var list = document.getElementById("exploredList");
+    if(list){
+      list.innerHTML = "";
+      TRACKED.forEach(function(id){
+        var done = state.visited.indexOf(id) !== -1;
+        var li = document.createElement("li");
+        if(done) li.className = "done";
+        li.innerHTML = '<span class="mark">'+(done?checkIco:"")+'</span>'+
+          (done ? SEC_LABELS[id] : '<button data-go="'+id+'">'+SEC_LABELS[id]+'</button>');
+        list.appendChild(li);
+      });
+    }
+
+    var box = document.getElementById("testResultBox");
+    if(box){
+      if(state.test){
+        var info = CAT_INFO[state.test.cat];
+        var pct = Math.round(state.test.score/state.test.max*100);
+        box.innerHTML =
+          '<div class="result-badge '+state.test.cat+'" style="margin-bottom:.6rem">'+info.badge+'</div>'+
+          '<p style="font-size:.9rem;color:var(--text-dim);margin:.2rem 0">Puntaje: <strong>'+state.test.score+' / '+state.test.max+'</strong> ('+pct+'%)</p>'+
+          '<p style="font-size:.8rem;color:var(--text-mute);margin:0">Realizado el '+fmtDate(state.test.date)+'</p>'+
+          '<button class="btn btn-ghost btn-sm" data-go="test" style="margin-top:.9rem">Ver informe completo</button>';
+      } else {
+        box.innerHTML = '<p class="prog-empty">Aún no has hecho el test. <button class="linklike" data-go="test">Hacerlo ahora</button></p>';
+      }
+    }
+
+    var ib = document.getElementById("improveBox");
+    if(ib){
+      if(state.test){
+        var dv = driverTags(state.test);
+        if(dv.length){
+          ib.innerHTML = '<ul class="improve-list">'+ dv.map(function(t){ return '<li><span class="i-dot"></span>'+cap(t)+'</li>'; }).join("") +'</ul>';
+        } else {
+          ib.innerHTML = '<p class="prog-empty">Tu último test no marcó áreas críticas. Mantén tus hábitos actuales.</p>';
+        }
+      } else {
+        ib.innerHTML = '<p class="prog-empty">Haz el <button class="linklike" data-go="test">test de sueño</button> para ver qué priorizar.</p>';
+      }
+    }
+
+    var pl = document.getElementById("planList"), pe = document.getElementById("planEmpty");
+    if(pl){
+      pl.innerHTML = "";
+      if(!state.habits.length){ if(pe) pe.hidden = false; }
+      else {
+        if(pe) pe.hidden = true;
+        state.habits.slice().sort(function(a,b){return a-b;}).forEach(function(i){
+          var li = document.createElement("li");
+          li.innerHTML = '<span class="p-star">✦</span><span>'+HABITS[i][0]+'</span>'+
+            '<button class="p-del" data-del="'+i+'" aria-label="Quitar del plan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>';
+          pl.appendChild(li);
+        });
+        pl.querySelectorAll(".p-del").forEach(function(b){
+          b.addEventListener("click", function(){ toggleHabit(+this.dataset.del, false); });
+        });
+      }
+    }
+
+    var cb = document.getElementById("celebrateBox");
+    if(cb){
+      var full = n === TOTAL && !!state.test;
+      cb.innerHTML = full
+        ? '<div class="celebrate"><span class="big-emoji">🌙</span><span>Completaste la guía y el test. Ahora te toca lo importante: elegir uno o dos hábitos y sostenerlos unas semanas.</span></div>'
+        : '';
+    }
+  }
+
+  document.getElementById("resetBtn").addEventListener("click", function(){
+    if(!confirm("Esto borrará tu progreso, el resultado del test y tu plan de hábitos en este dispositivo. ¿Continuar?")) return;
+    state = { visited: [], test: null, habits: [] };
+    save();
+    answers = new Array(QUESTIONS.length).fill(null); qi = 0;
+    document.querySelectorAll(".habit").forEach(function(h){
+      h.dataset.inplan = "false"; paintHabitBtn(h.querySelector(".add-plan"), false);
+    });
+    renderProgress(); renderPlanPreview(); renderIntro();
+  });
+
+  /* ---------------- FUENTES ---------------- */
+  var SOURCES = [
+    ["Recomendaciones de horas de sueño","Paruthi S, et al. Recommended Amount of Sleep for Pediatric Populations: A Consensus Statement of the American Academy of Sleep Medicine. J Clin Sleep Med. 2016.","https://doi.org/10.5664/jcsm.5866"],
+    ["Recomendaciones de horas de sueño","Hirshkowitz M, et al. National Sleep Foundation's sleep time duration recommendations. Sleep Health. 2015.","https://doi.org/10.1016/j.sleh.2014.12.010"],
+    ["Sueño insuficiente en estudiantes","Wheaton AG, et al. Short Sleep Duration Among Middle School and High School Students — United States, 2015. MMWR Morb Mortal Wkly Rep. 2018.","https://doi.org/10.15585/mmwr.mm6703a1"],
+    ["Sueño y memoria","Diekelmann S, Born J. The memory function of sleep. Nature Reviews Neuroscience. 2010.","https://doi.org/10.1038/nrn2762"],
+    ["Recuperación cerebral durante el sueño","Xie L, et al. Sleep Drives Metabolite Clearance from the Adult Brain. Science. 2013.","https://doi.org/10.1126/science.1241224"],
+    ["Luz nocturna y reloj interno","Chang AM, et al. Evening use of light-emitting eReaders negatively affects sleep, circadian timing, and next-morning alertness. PNAS. 2015.","https://doi.org/10.1073/pnas.1418490112"],
+    ["Sueño en la adolescencia","Carskadon MA. Sleep in Adolescents: The Perfect Storm. Pediatric Clinics of North America. 2011.","https://doi.org/10.1016/j.pcl.2011.03.003"],
+    ["Horario escolar y adolescentes","American Academy of Pediatrics. School Start Times for Adolescents (Policy Statement). Pediatrics. 2014.","https://doi.org/10.1542/peds.2014-1697"],
+    ["Falta de sueño y atención","Van Dongen HPA, et al. The cumulative cost of additional wakefulness: dose-response effects on neurobehavioral functions and sleep physiology from chronic sleep restriction and total sleep deprivation. Sleep. 2003.","https://doi.org/10.1093/sleep/26.2.117"],
+    ["Falta de sueño y ánimo en adolescentes","Short MA, Louca M. Sleep deprivation leads to mood deficits in healthy adolescents. Sleep Medicine. 2012.","https://doi.org/10.1016/j.sleep.2012.09.011"]
+  ];
+  var sl = document.getElementById("srcList");
+  SOURCES.forEach(function(s){
+    var d = document.createElement("div");
+    d.className = "src-item";
+    d.innerHTML = '<div class="meta">'+s[0]+'</div><div class="title">'+s[1]+'</div>'+
+      '<a href="'+s[2]+'" target="_blank" rel="noopener noreferrer">'+s[2]+'</a>';
+    sl.appendChild(d);
+  });
+
+  /* ---------------- init ---------------- */
+  if(reduceMotion){
+    document.querySelectorAll(".hero-viz animateMotion").forEach(function(a){ if(a.parentNode) a.parentNode.removeChild(a); });
+  }
+  renderProgress();
+  renderPlanPreview();
+  var start = (location.hash || "#inicio").slice(1);
+  go(views[start] ? start : "inicio", { replace: true, noscroll: true });
+})();
+</script>
